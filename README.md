@@ -5,10 +5,8 @@ gUI is a minimal UI runtime built around fine-grained reactivity and direct DOM 
 ## Install
 
 ```bash
-npm install gui-v1
+npm install @bragamateus/gui
 ```
-
-If you want to publish under another name or scope, change the `name` field in [package.json](/c:/wamp64/www/gUI/package.json) before the first release.
 
 ## Project Structure
 
@@ -43,7 +41,7 @@ README.md
 ## API
 
 ```js
-import { createApp, computed, effect, html, signal } from "gui-v1";
+import { createApp, computed, effect, html, signal } from "@bragamateus/gui";
 
 const count = signal(0);
 const double = computed(() => count.value * 2);
@@ -112,7 +110,7 @@ The included demo proves:
 
 ## Publishing To NPM
 
-1. Review the package name in [package.json](/c:/wamp64/www/gUI/package.json). `gui-v1` is configured now, but you can replace it with your final package name or scope before the first publish.
+1. Review the package name in [package.json](/c:/wamp64/www/gUI/package.json). The current publish target is `@bragamateus/gui`.
 2. Authenticate with NPM: `npm login`
 3. Validate the package locally: `npm run check`
 4. Preview the publish tarball: `npm run pack:dry-run`

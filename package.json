@@ -1,9 +1,9 @@
 {
-  "name": "gui-v1",
+  "name": "@bragamateus/gui",
   "version": "1.0.0",
   "description": "Minimal performance-first UI runtime with fine-grained reactivity and direct DOM bindings.",
   "license": "MIT",
-  "author": "Hans Braga",
+  "author": "Mateus Braga",
   "type": "module",
   "keywords": [
     "gui",
