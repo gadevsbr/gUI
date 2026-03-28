@@ -1,0 +1,302 @@
+:root {
+  --bg: #f4efe6;
+  --paper: rgba(255, 250, 242, 0.88);
+  --ink: #1d130f;
+  --muted: #6a5a4b;
+  --accent: #0f766e;
+  --accent-soft: rgba(15, 118, 110, 0.14);
+  --accent-strong: #0b4f4a;
+  --line: rgba(29, 19, 15, 0.12);
+  --shadow: 0 24px 80px rgba(35, 26, 19, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  font-family: "Space Grotesk", "Segoe UI", sans-serif;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at top left, rgba(15, 118, 110, 0.18), transparent 30%),
+    radial-gradient(circle at top right, rgba(216, 119, 6, 0.18), transparent 26%),
+    linear-gradient(180deg, #fff9f1 0%, var(--bg) 100%);
+}
+
+.page {
+  width: min(1180px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 32px 0 56px;
+}
+
+.page-header {
+  display: grid;
+  gap: 20px;
+  margin-bottom: 28px;
+}
+
+.page-header h1,
+.page-header p {
+  margin: 0;
+}
+
+.page-header h1 {
+  font-family: "Sora", "Segoe UI", sans-serif;
+  font-size: clamp(2.4rem, 5vw, 4.5rem);
+  line-height: 0.95;
+  letter-spacing: -0.05em;
+  max-width: 12ch;
+}
+
+.page-header p {
+  max-width: 58ch;
+  color: var(--muted);
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+
+.page-grid {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: minmax(0, 2.2fr) minmax(300px, 0.9fr);
+  align-items: start;
+}
+
+#app,
+.debug-panel {
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  background: var(--paper);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(16px);
+}
+
+#app {
+  overflow: hidden;
+}
+
+.demo-shell {
+  display: grid;
+  gap: 18px;
+  padding: 28px;
+}
+
+.hero,
+.panel {
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.62);
+  padding: 22px;
+}
+
+.hero {
+  background:
+    linear-gradient(135deg, rgba(15, 118, 110, 0.14), transparent 40%),
+    rgba(255, 255, 255, 0.7);
+}
+
+.eyebrow,
+.panel-kicker,
+.metric-label,
+.stat-label {
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+
+.title,
+.panel h2 {
+  margin: 0;
+  font-family: "Sora", "Segoe UI", sans-serif;
+  letter-spacing: -0.04em;
+}
+
+.title {
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  line-height: 1;
+}
+
+.lede,
+.panel p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.setup-metric {
+  display: inline-flex;
+  gap: 14px;
+  align-items: center;
+  margin-top: 18px;
+  padding: 12px 16px;
+  border-radius: 999px;
+  background: rgba(29, 19, 15, 0.06);
+}
+
+.metric-value,
+.stat-value {
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  line-height: 1;
+}
+
+.panel-header {
+  display: flex;
+  gap: 18px;
+  align-items: start;
+  justify-content: space-between;
+}
+
+.badge {
+  align-self: start;
+  padding: 10px 14px;
+  border-radius: 999px;
+  font-size: 0.86rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.badge--even {
+  background: rgba(15, 118, 110, 0.14);
+  color: var(--accent-strong);
+}
+
+.badge--odd {
+  background: rgba(216, 119, 6, 0.16);
+  color: #995200;
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.stat {
+  padding: 18px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.86);
+  border: 1px solid rgba(29, 19, 15, 0.08);
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.action {
+  border: 0;
+  border-radius: 999px;
+  padding: 13px 18px;
+  background: rgba(29, 19, 15, 0.08);
+  color: var(--ink);
+  cursor: pointer;
+  font: inherit;
+  transition: transform 140ms ease, background 140ms ease;
+}
+
+.action:hover {
+  transform: translateY(-1px);
+  background: rgba(29, 19, 15, 0.12);
+}
+
+.action--primary {
+  background: var(--accent);
+  color: white;
+}
+
+.action--primary:hover {
+  background: var(--accent-strong);
+}
+
+.debug-panel {
+  padding: 24px;
+}
+
+.debug-panel h2,
+.debug-panel p {
+  margin: 0;
+}
+
+.debug-panel h2 {
+  font-family: "Sora", "Segoe UI", sans-serif;
+  font-size: 1.6rem;
+  letter-spacing: -0.04em;
+}
+
+.debug-panel p {
+  margin-top: 10px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.debug-metric {
+  margin-top: 18px;
+  padding: 16px 18px;
+  border-radius: 18px;
+  background: rgba(15, 118, 110, 0.08);
+}
+
+.debug-metric span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.debug-metric strong {
+  display: block;
+  margin-top: 8px;
+  font-size: 2.2rem;
+  line-height: 1;
+}
+
+.update-list {
+  list-style: none;
+  padding: 0;
+  margin: 18px 0 0;
+  display: grid;
+  gap: 10px;
+}
+
+.update-item {
+  display: grid;
+  gap: 4px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(29, 19, 15, 0.08);
+  background: rgba(255, 255, 255, 0.82);
+}
+
+.update-item strong {
+  font-size: 0.86rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.update-item span {
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+@media (max-width: 960px) {
+  .page-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stat-grid {
+    grid-template-columns: 1fr;
+  }
+}

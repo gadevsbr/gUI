@@ -1,0 +1,51 @@
+{
+  "name": "gui-v1",
+  "version": "1.0.0",
+  "description": "Minimal performance-first UI runtime with fine-grained reactivity and direct DOM bindings.",
+  "license": "MIT",
+  "author": "Hans Braga",
+  "type": "module",
+  "keywords": [
+    "gui",
+    "ui",
+    "framework",
+    "reactivity",
+    "signals",
+    "fine-grained",
+    "dom",
+    "frontend"
+  ],
+  "sideEffects": false,
+  "files": [
+    "gui/index.js",
+    "gui/index.d.ts",
+    "gui/core/",
+    "gui/reactivity/",
+    "gui/rendering/",
+    "gui/utils/",
+    "README.md",
+    "LICENSE"
+  ],
+  "main": "./gui/index.js",
+  "module": "./gui/index.js",
+  "types": "./gui/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./gui/index.d.ts",
+      "import": "./gui/index.js",
+      "default": "./gui/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "check": "node --check gui/index.js && node --check demo/main.js",
+    "pack:dry-run": "npm pack --dry-run",
+    "prepublishOnly": "npm run check"
+  }
+}
