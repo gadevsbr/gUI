@@ -1,6 +1,7 @@
 gui/.git
 gui/.gitattributes
 gui/LICENSE
+npm-readme.md
 demo/
 index.html
 ROADMAP.md
