@@ -32,6 +32,7 @@ This makes gUI a strong fit for:
 - Scoped disposal for swapped dynamic subtrees
 - Microtask-based batching with deduped subscriber scheduling
 - Debug hooks for inspecting actual DOM writes
+- Official docs site with tutorials, recipes, API reference, performance notes, and a live playground
 - Browser demo and benchmark harness
 - ESM package with TypeScript declarations
 
@@ -40,6 +41,16 @@ This makes gUI a strong fit for:
 ```bash
 npm install @bragamateus/gui
 ```
+
+## Website
+
+The project site is live at:
+
+- https://gadevsbr.github.io/gUI/
+
+Use it when you want the higher-level view of the framework before reading source code. It includes
+tutorials, implementation notes, API reference, recipes, roadmap context, and an interactive
+playground that shows how gUI updates exact DOM bindings in real time.
 
 ## Update Note
 
@@ -207,6 +218,8 @@ removes most of that boilerplate without changing the runtime model.
 ## Demo And Benchmarks
 
 The repository includes:
+
+- https://gadevsbr.github.io/gUI/: docs site with tutorials, API reference, recipes, and the interactive playground
 
 - [`index.html`](./index.html): interactive demo for direct bindings, keyed rows, and scoped disposal
 - [`benchmark/index.html`](./benchmark/index.html): repeatable browser harness for text bursts, keyed reorders, and subtree cleanup cycles

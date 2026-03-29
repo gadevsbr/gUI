@@ -552,8 +552,9 @@ ol {
 
 .playground-preview-group {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 320px;
+  grid-template-columns: minmax(380px, 1.08fr) minmax(260px, 0.92fr);
   gap: var(--space-4);
+  align-items: start;
 }
 
 .playground-preview {
@@ -580,7 +581,7 @@ ol {
 
 .mini-metrics {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(124px, 1fr));
   gap: var(--space-4);
 }
 
@@ -600,13 +601,16 @@ ol {
   text-transform: uppercase;
   letter-spacing: 0.12em;
   color: var(--muted);
+  line-height: 1.35;
 }
 
 .mini-metrics strong,
 .filter-summary strong {
   display: block;
   margin-top: 8px;
-  font-size: 1.6rem;
+  font-size: clamp(1.3rem, 2vw, 1.6rem);
+  line-height: 1.05;
+  overflow-wrap: anywhere;
 }
 
 .theme-stage {
