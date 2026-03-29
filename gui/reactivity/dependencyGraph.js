@@ -14,23 +14,36 @@ export function createNodeId(prefix) {
 }
 
 export function createOwner(label = "owner") {
-  return {
+  const parent = currentOwner && !currentOwner.disposed ? currentOwner : null;
+  const owner = {
     id: createNodeId("owner"),
     label,
+    parent,
+    children: new Set(),
     disposables: new Set(),
     disposed: false,
   };
+
+  if (parent) {
+    parent.children.add(owner);
+  }
+
+  return owner;
 }
 
 export function withOwner(owner, callback) {
   const previousOwner = currentOwner;
-  currentOwner = owner;
+  currentOwner = owner ?? null;
 
   try {
     return callback();
   } finally {
     currentOwner = previousOwner;
   }
+}
+
+export function getCurrentOwner() {
+  return currentOwner;
 }
 
 export function registerDisposable(dispose) {
@@ -54,9 +67,20 @@ export function disposeOwner(owner) {
 
   owner.disposed = true;
 
+  for (const child of Array.from(owner.children)) {
+    disposeOwner(child);
+  }
+
+  owner.children.clear();
+
   for (const dispose of Array.from(owner.disposables)) {
     owner.disposables.delete(dispose);
     dispose();
+  }
+
+  if (owner.parent) {
+    owner.parent.children.delete(owner);
+    owner.parent = null;
   }
 }
 
@@ -110,6 +134,7 @@ export function createComputedNode(compute, label) {
     id: createNodeId("computed"),
     kind: "computed",
     label,
+    owner: currentOwner,
     compute,
     current: undefined,
     version: 0,
@@ -128,6 +153,7 @@ export function createSubscriberNode(kind, run, label) {
     id: createNodeId(kind),
     kind,
     label,
+    owner: currentOwner,
     run,
     sources: new Set(),
     sourceVersions: new Map(),
@@ -210,7 +236,9 @@ export function refreshComputed(node) {
   cleanupSources(node);
 
   const previousSubscriber = activeSubscriber;
+  const previousOwner = currentOwner;
   activeSubscriber = node;
+  currentOwner = node.owner ?? null;
   node.running = true;
 
   try {
@@ -230,6 +258,7 @@ export function refreshComputed(node) {
   } finally {
     node.running = false;
     activeSubscriber = previousSubscriber;
+    currentOwner = previousOwner;
   }
 }
 
@@ -259,7 +288,9 @@ export function executeSubscriber(node) {
   cleanupSources(node);
 
   const previousSubscriber = activeSubscriber;
+  const previousOwner = currentOwner;
   activeSubscriber = node;
+  currentOwner = node.owner ?? null;
 
   try {
     const cleanup = node.run();
@@ -268,6 +299,7 @@ export function executeSubscriber(node) {
     captureSourceVersions(node);
   } finally {
     activeSubscriber = previousSubscriber;
+    currentOwner = previousOwner;
     node.running = false;
   }
 }

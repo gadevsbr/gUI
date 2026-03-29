@@ -1,9 +1,17 @@
-import { registerDisposable, isReactiveToken } from "../reactivity/dependencyGraph.js";
+import {
+  createOwner,
+  disposeOwner,
+  isReactiveToken,
+  registerDisposable,
+  withOwner,
+} from "../reactivity/dependencyGraph.js";
 import { createBindingEffect } from "../reactivity/effect.js";
 import { isArray, isDocumentFragment, isFunction, isNode } from "../utils/is.js";
 import { warn } from "../utils/warn.js";
 import { insertNodesBefore, removeNodes, setAttributeValue, setTextContent } from "./domUpdater.js";
-import { isTemplateResult, toTemplateNodes } from "./html.js";
+import { setupListBinding, isListBinding } from "./list.js";
+import { normalizeRenderable, sameNodeSequence } from "./renderable.js";
+import { isTemplateResult } from "./templateResult.js";
 
 function isReactiveBinding(value) {
   return isReactiveToken(value) || isFunction(value);
@@ -22,6 +30,11 @@ function resolveBindingValue(value) {
 }
 
 function clearPart(part) {
+  if (part.cleanup) {
+    part.cleanup();
+    part.cleanup = null;
+  }
+
   if (part.currentNodes.length > 0) {
     removeNodes(part.currentNodes);
   }
@@ -43,51 +56,16 @@ function writeTextPart(part, value) {
   setTextContent(part.textNode, value);
 }
 
-function flattenChildValue(value, nodes) {
-  if (value === null || value === undefined || value === false) {
-    return;
-  }
-
-  if (isTemplateResult(value)) {
-    nodes.push(...toTemplateNodes(value));
-    return;
-  }
-
-  if (isDocumentFragment(value)) {
-    nodes.push(...Array.from(value.childNodes));
-    return;
-  }
-
-  if (isNode(value)) {
-    nodes.push(value);
-    return;
-  }
-
-  if (isArray(value)) {
-    for (const item of value) {
-      flattenChildValue(item, nodes);
-    }
-
-    return;
-  }
-
-  nodes.push(document.createTextNode(String(value)));
-}
-
 function writeNodePart(part, value) {
-  const nodes = [];
-  flattenChildValue(value, nodes);
+  const normalized = normalizeRenderable(value);
+  const { nodes, cleanup } = normalized;
 
   if (nodes.length === 0) {
     clearPart(part);
     return;
   }
 
-  if (
-    part.currentType === "nodes" &&
-    part.currentNodes.length === nodes.length &&
-    part.currentNodes.every((node, index) => node === nodes[index])
-  ) {
+  if (part.currentType === "nodes" && sameNodeSequence(part.currentNodes, nodes)) {
     return;
   }
 
@@ -95,10 +73,20 @@ function writeNodePart(part, value) {
   part.currentNodes = nodes;
   part.currentType = "nodes";
   part.textNode = null;
+  part.cleanup = cleanup;
   insertNodesBefore(part.anchor, nodes);
 }
 
 function updateNodePart(part, value) {
+  if (isListBinding(value)) {
+    if (part.currentType !== "list") {
+      clearPart(part);
+      setupListBinding(part, value);
+    }
+
+    return;
+  }
+
   if (
     value === null ||
     value === undefined ||
@@ -108,16 +96,45 @@ function updateNodePart(part, value) {
     isTemplateResult(value) ||
     isArray(value)
   ) {
+    if (part.currentType === "list") {
+      clearPart(part);
+    }
+
     writeNodePart(part, value);
     return;
+  }
+
+  if (part.currentType === "list") {
+    clearPart(part);
   }
 
   writeTextPart(part, value);
 }
 
 function setupNodeBinding(part, value) {
+  if (isListBinding(value)) {
+    setupListBinding(part, value);
+    return;
+  }
+
   if (!isReactiveBinding(value)) {
     updateNodePart(part, value);
+    return;
+  }
+
+  if (isFunction(value)) {
+    createBindingEffect(() => {
+      const branchOwner = createOwner(`node-branch:${part.index}`);
+      const resolved = withOwner(branchOwner, () => value());
+
+      updateNodePart(part, resolved);
+
+      return () => {
+        disposeOwner(branchOwner);
+      };
+    }, {
+      label: `node-part:${part.index}`,
+    });
     return;
   }
 

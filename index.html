@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>gUI v1 Demo</title>
+    <title>gUI Demo</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -15,12 +15,13 @@
   <body>
     <div class="page">
       <header class="page-header">
-        <h1>gUI v1 is built for direct subscriptions, not rerender passes.</h1>
+        <h1>gUI is built for direct subscriptions, keyed ownership, and exact DOM writes.</h1>
         <p>
-          The demo below mounts a component once, then updates only the text nodes and attributes
-          bound to changed signals or computeds. The debug stream is fed by the runtime’s DOM update
-          hook.
+          The demo below proves isolated text and attribute writes, keyed row reconciliation
+          without rerender churn, and scoped disposal when dynamic subtrees leave the DOM. The
+          debug stream is fed by the runtime's DOM update hook.
         </p>
+        <p><a href="./benchmark/index.html">Open the benchmark harness</a></p>
       </header>
 
       <div class="page-grid">
@@ -29,8 +30,8 @@
         <aside class="debug-panel">
           <h2>DOM update stream</h2>
           <p>
-            Click the controls in the demo. You should see isolated text and attribute updates
-            instead of subtree replacement or component reruns.
+            Click the controls in the demo. You should see isolated text and attribute updates,
+            plus only the structural moves needed for keyed list changes.
           </p>
 
           <div class="debug-metric">

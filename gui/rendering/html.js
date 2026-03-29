@@ -1,27 +1,28 @@
+import { createOwner, disposeOwner, withOwner } from "../reactivity/dependencyGraph.js";
 import { setupBindings } from "./bindings.js";
 import { compileTemplate, locateTemplateParts } from "./templateCompiler.js";
-
-const TEMPLATE_RESULT = Symbol("gui.template.result");
+import { createTemplateResult, isTemplateResult, toTemplateNodes } from "./templateResult.js";
 
 export function html(strings, ...values) {
   const compiled = compileTemplate(strings);
   const fragment = compiled.template.content.cloneNode(true);
   const parts = locateTemplateParts(fragment, compiled.parts);
   const nodes = Array.from(fragment.childNodes);
+  const owner = compiled.parts.length > 0 ? createOwner("template") : null;
 
-  setupBindings(parts, values);
+  if (owner) {
+    withOwner(owner, () => {
+      setupBindings(parts, values);
+    });
+  } else {
+    setupBindings(parts, values);
+  }
 
-  return {
-    [TEMPLATE_RESULT]: true,
-    fragment,
-    nodes,
-  };
+  return createTemplateResult(fragment, nodes, owner, () => {
+    if (owner) {
+      disposeOwner(owner);
+    }
+  });
 }
 
-export function isTemplateResult(value) {
-  return Boolean(value && value[TEMPLATE_RESULT]);
-}
-
-export function toTemplateNodes(templateResult) {
-  return templateResult.nodes;
-}
+export { isTemplateResult, toTemplateNodes };

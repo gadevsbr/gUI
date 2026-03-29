@@ -4,4 +4,5 @@ export { signal } from "./reactivity/signal.js";
 export { computed } from "./reactivity/computed.js";
 export { effect } from "./reactivity/effect.js";
 export { html, isTemplateResult } from "./rendering/html.js";
+export { list } from "./rendering/list.js";
 export { setDomUpdateHook } from "./rendering/domUpdater.js";

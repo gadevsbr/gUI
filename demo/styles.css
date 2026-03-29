@@ -1,11 +1,13 @@
 :root {
   --bg: #f4efe6;
-  --paper: rgba(255, 250, 242, 0.88);
+  --paper: rgba(255, 250, 242, 0.9);
   --ink: #1d130f;
   --muted: #6a5a4b;
   --accent: #0f766e;
   --accent-soft: rgba(15, 118, 110, 0.14);
   --accent-strong: #0b4f4a;
+  --amber: #b26a16;
+  --amber-soft: rgba(216, 119, 6, 0.15);
   --line: rgba(29, 19, 15, 0.12);
   --shadow: 0 24px 80px rgba(35, 26, 19, 0.12);
 }
@@ -25,19 +27,19 @@ body {
   color: var(--ink);
   background:
     radial-gradient(circle at top left, rgba(15, 118, 110, 0.18), transparent 30%),
-    radial-gradient(circle at top right, rgba(216, 119, 6, 0.18), transparent 26%),
+    radial-gradient(circle at top right, rgba(216, 119, 6, 0.16), transparent 28%),
     linear-gradient(180deg, #fff9f1 0%, var(--bg) 100%);
 }
 
 .page {
-  width: min(1180px, calc(100% - 32px));
+  width: min(1240px, calc(100% - 32px));
   margin: 0 auto;
   padding: 32px 0 56px;
 }
 
 .page-header {
   display: grid;
-  gap: 20px;
+  gap: 18px;
   margin-bottom: 28px;
 }
 
@@ -49,13 +51,13 @@ body {
 .page-header h1 {
   font-family: "Sora", "Segoe UI", sans-serif;
   font-size: clamp(2.4rem, 5vw, 4.5rem);
-  line-height: 0.95;
+  line-height: 0.98;
   letter-spacing: -0.05em;
-  max-width: 12ch;
+  max-width: 13ch;
 }
 
 .page-header p {
-  max-width: 58ch;
+  max-width: 66ch;
   color: var(--muted);
   font-size: 1.05rem;
   line-height: 1.6;
@@ -64,7 +66,7 @@ body {
 .page-grid {
   display: grid;
   gap: 24px;
-  grid-template-columns: minmax(0, 2.2fr) minmax(300px, 0.9fr);
+  grid-template-columns: minmax(0, 2.2fr) minmax(320px, 0.92fr);
   align-items: start;
 }
 
@@ -91,14 +93,14 @@ body {
 .panel {
   border: 1px solid var(--line);
   border-radius: 22px;
-  background: rgba(255, 255, 255, 0.62);
+  background: rgba(255, 255, 255, 0.66);
   padding: 22px;
 }
 
 .hero {
   background:
     linear-gradient(135deg, rgba(15, 118, 110, 0.14), transparent 40%),
-    rgba(255, 255, 255, 0.7);
+    rgba(255, 255, 255, 0.74);
 }
 
 .eyebrow,
@@ -113,7 +115,8 @@ body {
 }
 
 .title,
-.panel h2 {
+.panel h2,
+.detail-card h3 {
   margin: 0;
   font-family: "Sora", "Segoe UI", sans-serif;
   letter-spacing: -0.04em;
@@ -125,13 +128,15 @@ body {
 }
 
 .lede,
-.panel p {
+.panel p,
+.panel-copy {
   margin: 0;
   color: var(--muted);
   line-height: 1.6;
 }
 
-.setup-metric {
+.setup-metric,
+.order-strip {
   display: inline-flex;
   gap: 14px;
   align-items: center;
@@ -154,6 +159,29 @@ body {
   justify-content: space-between;
 }
 
+.panel-meta {
+  min-width: 120px;
+  padding: 12px 14px;
+  border-radius: 18px;
+  background: rgba(29, 19, 15, 0.05);
+  text-align: right;
+}
+
+.panel-meta span {
+  display: block;
+  font-size: 0.74rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.panel-meta strong {
+  display: block;
+  margin-top: 6px;
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
 .badge {
   align-self: start;
   padding: 10px 14px;
@@ -170,22 +198,43 @@ body {
 }
 
 .badge--odd {
-  background: rgba(216, 119, 6, 0.16);
+  background: var(--amber-soft);
   color: #995200;
 }
 
-.stat-grid {
+.stat-grid,
+.mini-grid,
+.detail-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 14px;
+}
+
+.stat-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   margin-top: 18px;
 }
 
-.stat {
+.mini-grid,
+.detail-grid {
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  margin-top: 18px;
+}
+
+.stat,
+.mini-stat,
+.detail-stat {
   padding: 18px;
   border-radius: 20px;
   background: rgba(255, 255, 255, 0.86);
   border: 1px solid rgba(29, 19, 15, 0.08);
+}
+
+.mini-stat strong,
+.detail-stat strong {
+  display: block;
+  margin-top: 10px;
+  font-size: 1.8rem;
+  line-height: 1;
 }
 
 .controls {
@@ -193,6 +242,10 @@ body {
   flex-wrap: wrap;
   gap: 12px;
   margin-top: 22px;
+}
+
+.controls--dense {
+  margin-top: 18px;
 }
 
 .action {
@@ -220,8 +273,104 @@ body {
   background: var(--accent-strong);
 }
 
+.panel--list,
+.panel--disposal {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.8), rgba(255, 250, 242, 0.72)),
+    rgba(255, 255, 255, 0.7);
+}
+
+.order-strip {
+  width: fit-content;
+  max-width: 100%;
+}
+
+.order-strip span {
+  color: var(--muted);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.order-strip strong {
+  overflow-wrap: anywhere;
+}
+
+.queue-list {
+  list-style: none;
+  padding: 0;
+  margin: 18px 0 0;
+  display: grid;
+  gap: 12px;
+}
+
+.queue-item {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: center;
+  padding: 16px 18px;
+  border-radius: 20px;
+  border: 1px solid rgba(29, 19, 15, 0.08);
+  background: rgba(255, 255, 255, 0.88);
+}
+
+.queue-index {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+  font-weight: 700;
+}
+
+.queue-copy {
+  min-width: 0;
+}
+
+.queue-copy strong,
+.queue-copy span {
+  display: block;
+}
+
+.queue-copy strong {
+  font-size: 1rem;
+}
+
+.queue-copy span {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.queue-value {
+  font-family: "Sora", "Segoe UI", sans-serif;
+  font-size: 1.7rem;
+  letter-spacing: -0.05em;
+}
+
+.detail-card {
+  margin-top: 18px;
+  padding: 20px;
+  border-radius: 22px;
+  border: 1px solid rgba(29, 19, 15, 0.08);
+  background:
+    linear-gradient(135deg, rgba(216, 119, 6, 0.12), transparent 42%),
+    rgba(255, 255, 255, 0.82);
+}
+
+.detail-card p {
+  margin-top: 10px;
+}
+
 .debug-panel {
   padding: 24px;
+  position: sticky;
+  top: 24px;
 }
 
 .debug-panel h2,
@@ -291,12 +440,31 @@ body {
   font-size: 0.95rem;
 }
 
-@media (max-width: 960px) {
+@media (max-width: 1080px) {
   .page-grid {
     grid-template-columns: 1fr;
   }
 
+  .debug-panel {
+    position: static;
+  }
+}
+
+@media (max-width: 760px) {
   .stat-grid {
     grid-template-columns: 1fr;
+  }
+
+  .panel-header,
+  .queue-item {
+    grid-template-columns: 1fr;
+  }
+
+  .panel-meta {
+    text-align: left;
+  }
+
+  .queue-item {
+    display: grid;
   }
 }

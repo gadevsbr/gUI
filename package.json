@@ -1,6 +1,6 @@
 {
   "name": "@bragamateus/gui",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Minimal performance-first UI runtime with fine-grained reactivity and direct DOM bindings.",
   "license": "MIT",
   "author": "Mateus Braga",
@@ -44,7 +44,7 @@
     "node": ">=18"
   },
   "scripts": {
-    "check": "node --check gui/index.js && node --check demo/main.js",
+    "check": "node scripts/check-syntax.mjs",
     "pack:dry-run": "npm pack --dry-run",
     "prepublishOnly": "npm run check",
     "prepack": "node scripts/swap-readme.mjs npm",

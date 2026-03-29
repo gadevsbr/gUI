@@ -32,6 +32,7 @@ export interface EffectHandle {
 export interface TemplateResult {
   readonly fragment: DocumentFragment;
   readonly nodes: Node[];
+  dispose(): void;
 }
 
 export interface MountHandle {
@@ -44,6 +45,10 @@ export interface AppHandle {
   owner: unknown;
   target: Element | Node;
   unmount(): void;
+}
+
+export interface ListBinding<T> {
+  readonly source: T[] | Signal<T[]> | Computed<T[]> | (() => T[]);
 }
 
 export declare function signal<T>(initialValue: T, options?: { label?: string }): Signal<T>;
@@ -61,6 +66,13 @@ export declare function html(
 ): TemplateResult;
 
 export declare function isTemplateResult(value: unknown): value is TemplateResult;
+
+export declare function list<T>(
+  source: T[] | Signal<T[]> | Computed<T[]> | (() => T[]),
+  key: ((item: T, index: number) => unknown) | keyof T,
+  render: (item: Signal<T>, index: Signal<number>, key: unknown) => unknown,
+  options?: { label?: string },
+): ListBinding<T>;
 
 export declare function mount(target: string | Node, value: unknown): MountHandle;
 
