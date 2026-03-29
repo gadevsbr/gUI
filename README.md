@@ -47,10 +47,18 @@ npm install @bragamateus/gui
 The project site is live at:
 
 - https://gadevsbr.github.io/gUI/
+- https://gadevsbr.github.io/gUI/demo/
+- https://gadevsbr.github.io/gUI/benchmark/
 
 Use it when you want the higher-level view of the framework before reading source code. It includes
 tutorials, implementation notes, API reference, recipes, roadmap context, and an interactive
 playground that shows how gUI updates exact DOM bindings in real time.
+
+Quick access:
+
+- Docs + tutorials + playground: `https://gadevsbr.github.io/gUI/`
+- Runtime demo: `https://gadevsbr.github.io/gUI/demo/`
+- Benchmark harness: `https://gadevsbr.github.io/gUI/benchmark/`
 
 ## Update Note
 
@@ -219,10 +227,11 @@ removes most of that boilerplate without changing the runtime model.
 
 The repository includes:
 
-- https://gadevsbr.github.io/gUI/: docs site with tutorials, API reference, recipes, and the interactive playground
-
-- [`index.html`](./index.html): interactive demo for direct bindings, keyed rows, and scoped disposal
-- [`benchmark/index.html`](./benchmark/index.html): repeatable browser harness for text bursts, keyed reorders, and subtree cleanup cycles
+- `https://gadevsbr.github.io/gUI/`: docs site with tutorials, API reference, recipes, and the interactive playground
+- `https://gadevsbr.github.io/gUI/demo/`: public runtime demo for direct bindings, keyed rows, and scoped disposal
+- `https://gadevsbr.github.io/gUI/benchmark/`: public browser harness for text bursts, keyed reorders, and subtree cleanup cycles
+- [`index.html`](./index.html): source entry for the runtime demo
+- [`benchmark/index.html`](./benchmark/index.html): source entry for the benchmark harness
 
 Run locally with any static server, then open those pages in the browser.
 

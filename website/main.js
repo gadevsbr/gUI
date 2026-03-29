@@ -400,6 +400,24 @@ function App() {
           </div>
 
           <div class="sidebar-card compact-card">
+            <p class="eyebrow">Explore</p>
+            <div class="detail-list">
+              <a class="detail-link" href="./demo/">
+                <div>
+                  <strong>Runtime Demo</strong>
+                  <span>Inspect direct bindings, keyed ownership, and DOM writes.</span>
+                </div>
+              </a>
+              <a class="detail-link" href="./benchmark/">
+                <div>
+                  <strong>Benchmark Harness</strong>
+                  <span>Run batching, keyed reorder, and disposal scenarios in the browser.</span>
+                </div>
+              </a>
+            </div>
+          </div>
+
+          <div class="sidebar-card compact-card">
             <p class="eyebrow">Install</p>
             <pre class="code-block compact"><code>${codeSamples.install}</code></pre>
           </div>
@@ -807,7 +825,7 @@ function App() {
           <section class="section-panel footer-panel">
             <div>
               <p class="eyebrow">Build with gUI</p>
-              <h2>Start with the quickstart, then validate behavior in the playground.</h2>
+              <h2>Start with the quickstart, then jump into the docs site, runtime demo, or benchmark.</h2>
             </div>
             <div class="footer-actions">
               <a class="primary-button" href="#getting-started" on:click=${() => setSection("getting-started")}>
@@ -815,6 +833,12 @@ function App() {
               </a>
               <a class="ghost-button" href="#playground" on:click=${() => setSection("playground")}>
                 Inspect live updates
+              </a>
+              <a class="ghost-button" href="./demo/">
+                Open runtime demo
+              </a>
+              <a class="ghost-button" href="./benchmark/">
+                Open benchmark
               </a>
             </div>
           </section>
