@@ -1,6 +1,6 @@
 const templateCache = new WeakMap();
 
-function readAttributeContext(chunk) {
+export function readAttributeContext(chunk) {
   const lastOpen = chunk.lastIndexOf("<");
   const lastClose = chunk.lastIndexOf(">");
 

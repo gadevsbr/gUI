@@ -27,6 +27,7 @@ This makes gUI a strong fit for:
 
 - Fine-grained `signal()`, `computed()`, and `effect()` primitives
 - Tagged template rendering with direct text, attribute, and event bindings
+- Optional compile-assisted templates for automatic expression capture
 - Keyed `list()` reconciliation with stable per-item ownership
 - Scoped disposal for swapped dynamic subtrees
 - Microtask-based batching with deduped subscriber scheduling
@@ -38,6 +39,63 @@ This makes gUI a strong fit for:
 
 ```bash
 npm install @bragamateus/gui
+```
+
+## Update Note
+
+### v1.1.0
+
+This release moves gUI beyond fine-grained static bindings and into a more practical application
+runtime:
+
+- keyed `list()` reconciliation with stable per-item ownership
+- scoped disposal for dynamic subtrees and nested effects
+- repeatable benchmark harness for batching, keyed reorder, and cleanup cycles
+- optional compile-assisted templates with Vite and esbuild integration
+
+This is the first version where gUI pairs low-level runtime precision with a realistic path to
+better day-to-day developer ergonomics.
+
+## Optional Compiler
+
+For build-based projects, gUI now ships an optional compiler that rewrites non-event `html\`...\``
+interpolations into getter functions automatically.
+
+That means code like this:
+
+```js
+html`<p>${count.value * 2}</p>`
+```
+
+can be compiled to the runtime-safe equivalent automatically:
+
+```js
+html`<p>${() => count.value * 2}</p>`
+```
+
+### Vite
+
+```js
+import { defineConfig } from "vite";
+import { guiVitePlugin } from "@bragamateus/gui/compiler";
+
+export default defineConfig({
+  plugins: [guiVitePlugin()],
+});
+```
+
+### esbuild
+
+```js
+import { build } from "esbuild";
+import { guiEsbuildPlugin } from "@bragamateus/gui/compiler";
+
+await build({
+  entryPoints: ["src/main.js"],
+  bundle: true,
+  outfile: "dist/main.js",
+  plugins: [guiEsbuildPlugin()],
+});
 ```
 
 ## Quick Example
@@ -131,14 +189,20 @@ gUI is optimized around a simple rule: state changes should trigger only the wor
 
 ## Important Constraint
 
-gUI currently uses runtime tagged templates rather than a compile step. Because JavaScript evaluates expressions before the `html` tag receives them:
+gUI supports two modes:
+
+- runtime-only mode
+- compile-assisted mode
+
+In runtime-only mode, JavaScript still evaluates expressions before the `html` tag receives them:
 
 - `${count.value}` is reactive during setup for primitives
 - `${() => count.value * 2}` is reactive
 - `${count.value * 2}` should use `computed()` or a getter function if it needs to update
 - object property access should usually live inside a getter function, for example `${() => row.value.label}`
 
-That constraint is explicit. gUI does not hide it behind broad rerender behavior.
+With the optional compiler enabled, most non-event interpolations are wrapped automatically, which
+removes most of that boilerplate without changing the runtime model.
 
 ## Demo And Benchmarks
 
@@ -153,6 +217,7 @@ Run locally with any static server, then open those pages in the browser.
 
 ```text
 gui/
+  compiler/
   core/
   reactivity/
   rendering/
@@ -167,9 +232,9 @@ ROADMAP.md
 
 The current direction is:
 
-- compile-assisted templates for richer expression capture
 - deeper devtools and graph inspection
 - context and prop helpers that preserve one-time execution
+- compiler diagnostics and opt-out annotations for edge-case expressions
 - SSR and hydration without rerendering static DOM
 
 See [ROADMAP.md](./ROADMAP.md) for the full roadmap.

@@ -5,12 +5,13 @@
 - Keyed `list()` helpers with stable per-item ownership and minimal structural churn.
 - Scoped disposal for dynamic child templates so swapped subtrees release nested effects cleanly.
 - A repeatable browser perf harness for text bursts, keyed reorders, and subtree cleanup cycles.
+- Compile-assisted templates with Vite/esbuild integration for automatic expression capture.
 
 ## Near-Term
 
-- Add compile-assisted templates for richer expression capture without giving up direct DOM bindings.
 - Add devtools hooks for inspecting source graphs, subscriber edges, and flush order.
 - Add context and prop helpers that preserve one-time component execution.
+- Add compiler diagnostics and opt-out annotations for edge-case expressions.
 
 ## Medium-Term
 

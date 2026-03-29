@@ -10,12 +10,22 @@ gUI is a performance-first UI runtime for developers who want exact DOM updates 
 npm install @bragamateus/gui
 ```
 
+## Update Note
+
+### v1.1.0
+
+- Added keyed `list()` reconciliation with stable per-item ownership
+- Added scoped disposal for dynamic subtrees and nested effects
+- Added a browser benchmark harness for batching, keyed reorder, and cleanup validation
+- Added optional compile-assisted templates with Vite and esbuild integration
+
 ## Why teams use it
 
 - Updates only the exact text nodes and attributes that changed
 - Keeps components as setup functions instead of rerender loops
 - Reconciles keyed lists by moving existing DOM nodes in place
 - Disposes nested effects and listeners when dynamic subtrees leave the DOM
+- Ships an optional compiler for automatic non-event expression capture
 - Avoids virtual DOM diffing and hook-style dependency choreography
 
 ## Example
@@ -60,6 +70,7 @@ createApp("#app", App);
 - `html\`...\`` binds dynamic DOM slots directly
 - `list(source, key, render)` creates keyed structural bindings
 - `createApp(target, component)` mounts a component once
+- `@bragamateus/gui/compiler` exposes the optional template compiler for Vite and esbuild
 
 ## Runtime Model
 
@@ -74,7 +85,9 @@ gUI is optimized around a simple rule: state changes should trigger only the wor
 
 ## Important Note
 
-Because gUI uses runtime tagged templates, complex inline expressions should use `computed()` or getter functions when they need reactive updates. Object property access should usually live inside getters, for example `${() => row.value.label}`.
+In runtime-only mode, complex inline expressions should still use `computed()` or getter
+functions. With `@bragamateus/gui/compiler`, most non-event interpolations are wrapped
+automatically during the build step.
 
 ## Package Details
 
