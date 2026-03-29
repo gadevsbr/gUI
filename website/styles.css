@@ -809,6 +809,16 @@ ol {
   display: none;
 }
 
+@media (max-width: 1520px) {
+  .playground-preview-group {
+    grid-template-columns: 1fr;
+  }
+
+  .debug-rail {
+    order: 2;
+  }
+}
+
 @media (max-width: 1280px) {
   .layout,
   .hero-panel,
