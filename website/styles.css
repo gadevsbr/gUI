@@ -541,7 +541,7 @@ ol {
 
 .playground-grid {
   display: grid;
-  grid-template-columns: minmax(340px, 0.95fr) minmax(0, 1.05fr);
+  grid-template-columns: 1fr;
   gap: var(--space-4);
 }
 
@@ -552,7 +552,7 @@ ol {
 
 .playground-preview-group {
   display: grid;
-  grid-template-columns: minmax(380px, 1.08fr) minmax(260px, 0.92fr);
+  grid-template-columns: minmax(0, 1.2fr) minmax(260px, 0.8fr);
   gap: var(--space-4);
   align-items: start;
 }
@@ -581,7 +581,7 @@ ol {
 
 .mini-metrics {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(124px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
   gap: var(--space-4);
 }
 
