@@ -27,10 +27,16 @@ jobs:
 
       - name: Prepare Pages artifact
         run: |
-          mkdir -p dist-pages/gui
+          mkdir -p dist-pages/gui dist-pages/demo dist-pages/benchmark
           cp -R website/. dist-pages/
           cp -R gui/. dist-pages/gui/
+          cp -R demo/. dist-pages/demo/
+          cp -R benchmark/. dist-pages/benchmark/
+          cp index.html dist-pages/demo/index.html
           sed -i 's#\.\./gui/index\.js#./gui/index.js#' dist-pages/main.js
+          sed -i 's#\./demo/styles\.css#./styles.css#' dist-pages/demo/index.html
+          sed -i 's#\./demo/main\.js#./main.js#' dist-pages/demo/index.html
+          sed -i 's#\./benchmark/index\.html#../benchmark/index.html#' dist-pages/demo/index.html
           touch dist-pages/.nojekyll
 
       - name: Upload GitHub Pages artifact

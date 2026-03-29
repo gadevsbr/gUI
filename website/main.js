@@ -383,6 +383,8 @@ function App() {
           >
             ${() => (mobileNavOpen.value ? "Close menu" : "Open menu")}
           </button>
+          <a class="ghost-button" href="./demo/">Runtime Demo</a>
+          <a class="ghost-button" href="./benchmark/">Benchmark</a>
           <a class="ghost-button" href="#api" on:click=${() => setSection("api")}>API Reference</a>
           <a class="primary-button" href="#playground" on:click=${() => setSection("playground")}>
             Open Playground
@@ -432,6 +434,8 @@ function App() {
                 <a class="ghost-button" href="#concepts" on:click=${() => setSection("concepts")}>
                   Learn the Model
                 </a>
+                <a class="ghost-button" href="./demo/">Open Runtime Demo</a>
+                <a class="ghost-button" href="./benchmark/">Open Benchmark Harness</a>
               </div>
             </div>
 
@@ -594,6 +598,10 @@ function App() {
                 Switch between presets to see how gUI handles text bindings, attribute updates, and
                 computed filtering while the DOM write log stays scoped to the preview only.
               </p>
+              <div class="section-actions">
+                <a class="ghost-button" href="./demo/">Open Runtime Demo</a>
+                <a class="ghost-button" href="./benchmark/">Open Benchmark Harness</a>
+              </div>
             </div>
 
             <div class="preset-row">${renderPresetOptions()}</div>
