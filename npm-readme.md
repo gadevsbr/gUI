@@ -10,14 +10,20 @@ gUI is a performance-first UI runtime for developers who want exact DOM updates 
 npm install @bragamateus/gui
 ```
 
+GitHub Packages:
+
+```bash
+npm install @gadevsbr/gui --registry=https://npm.pkg.github.com
+```
+
 ## Update Note
 
-### v1.1.0
+### v1.2.0
 
-- Added keyed `list()` reconciliation with stable per-item ownership
-- Added scoped disposal for dynamic subtrees and nested effects
-- Added a browser benchmark harness for batching, keyed reorder, and cleanup validation
-- Added optional compile-assisted templates with Vite and esbuild integration
+- Added the official `@bragamateus/gui/devtools` inspector for exact DOM overlays and runtime timelines
+- Added `subscribeDomUpdates()` for multi-listener DOM write observation
+- Expanded runtime instrumentation for text, attribute, insert, move, remove, cleanup, and flush events
+- Tightened package validation with the current Vitest + `happy-dom` test suite
 
 ## Why teams use it
 
@@ -25,6 +31,7 @@ npm install @bragamateus/gui
 - Keeps components as setup functions instead of rerender loops
 - Reconciles keyed lists by moving existing DOM nodes in place
 - Disposes nested effects and listeners when dynamic subtrees leave the DOM
+- Exposes control-flow and composition helpers without switching to a rerender model
 - Ships an optional compiler for automatic non-event expression capture
 - Ships `@bragamateus/gui/devtools` for visual runtime inspection
 - Avoids virtual DOM diffing and hook-style dependency choreography
@@ -68,10 +75,14 @@ createApp("#app", App);
 - `signal(initialValue)` creates reactive state
 - `computed(fn)` creates lazy cached derived state
 - `effect(fn)` runs tracked side effects with cleanup
-- `html\`...\`` binds dynamic DOM slots directly
+- `html\`...\`` binds dynamic DOM slots directly and `isTemplateResult(value)` detects template results
 - `list(source, key, render)` creates keyed structural bindings
+- `Show()`, `Match()`, and `Switch()` expose control-flow primitives
+- `Portal(target, children)` renders into another DOM container with scoped cleanup
+- `createContext()`, `provideContext()`, `useContext()`, `mergeProps()`, and `splitProps()` cover composition helpers
+- `mount(target, value)` mounts arbitrary renderables with explicit teardown
 - `createApp(target, component)` mounts a component once
-- `@bragamateus/gui/compiler` exposes the optional template compiler for Vite and esbuild
+- `@bragamateus/gui/compiler` exposes `guiVitePlugin()`, `guiEsbuildPlugin()`, and `transformGuiTemplates()`
 - `@bragamateus/gui/devtools` exposes the visual inspector for overlays and runtime timelines
 
 ## Visual Inspector
@@ -104,6 +115,8 @@ automatically during the build step.
 
 ## Package Details
 
+- NPM: `@bragamateus/gui`
+- GitHub Packages: `@gadevsbr/gui`
 - ESM
 - TypeScript declarations included
 - License: MIT

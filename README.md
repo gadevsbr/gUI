@@ -27,11 +27,14 @@ This makes gUI a strong fit for:
 
 - Fine-grained `signal()`, `computed()`, and `effect()` primitives
 - Tagged template rendering with direct text, attribute, and event bindings
+- First-class control flow with `Show()`, `Switch()`, `Match()`, and `Portal()`
+- Composition helpers with `createContext()`, `provideContext()`, `useContext()`, `mergeProps()`, and `splitProps()`
 - Optional compile-assisted templates for automatic expression capture
 - Keyed `list()` reconciliation with stable per-item ownership
 - Scoped disposal for swapped dynamic subtrees
+- `mount()` and `createApp()` helpers for one-time setup and controlled teardown
 - Microtask-based batching with deduped subscriber scheduling
-- Debug hooks for inspecting actual DOM writes
+- DOM write instrumentation via `setDomUpdateHook()` and `subscribeDomUpdates()`
 - Optional visual inspector with overlays for exact writes, keyed moves, cleanup, and flushes
 - Official docs site with tutorials, recipes, API reference, performance notes, and a live playground
 - Browser demo and benchmark harness
@@ -41,6 +44,12 @@ This makes gUI a strong fit for:
 
 ```bash
 npm install @bragamateus/gui
+```
+
+GitHub Packages:
+
+```bash
+npm install @gadevsbr/gui --registry=https://npm.pkg.github.com
 ```
 
 ## Website
@@ -64,18 +73,19 @@ Quick access:
 
 ## Update Note
 
-### v1.1.0
+### v1.2.0
 
-This release moves gUI beyond fine-grained static bindings and into a more practical application
-runtime:
+`1.2.0` is the current package line on npm and GitHub Packages.
 
-- keyed `list()` reconciliation with stable per-item ownership
-- scoped disposal for dynamic subtrees and nested effects
-- repeatable benchmark harness for batching, keyed reorder, and cleanup cycles
-- optional compile-assisted templates with Vite and esbuild integration
+This version sharpens both the runtime and the debugging story:
 
-This is the first version where gUI pairs low-level runtime precision with a realistic path to
-better day-to-day developer ergonomics.
+- official `@bragamateus/gui/devtools` inspector for exact DOM overlays and runtime timelines
+- `subscribeDomUpdates()` for multi-listener DOM write observation alongside the legacy single-hook API
+- richer runtime instrumentation for text, attribute, insert, move, remove, cleanup, and flush events
+- strengthened package validation with a broad Vitest + `happy-dom` test suite
+
+The public API documented below now matches the code currently exported by the package, including
+composition helpers, control-flow primitives, portals, compiler hooks, and devtools.
 
 ## Optional Compiler
 
@@ -210,6 +220,8 @@ Runs tracked side effects with cleanup support. Effects are batched in microtask
 
 Compiles a template once per call site, clones real DOM nodes, and wires each dynamic slot directly to signals, computeds, or getter functions.
 
+`isTemplateResult(value)` is also exported when you need to distinguish gUI template results from plain values.
+
 ### `list(source, key, render)`
 
 Creates keyed structural bindings. Each key gets stable ownership, so reorders move existing DOM nodes and per-item effects survive until that key actually leaves the list.
@@ -223,6 +235,31 @@ Creates keyed structural bindings. Each key gets stable ownership, so reorders m
 ### `createApp(target, component)`
 
 Runs the component once, mounts the result, and keeps future work inside bindings, signals, computeds, effects, and keyed owners.
+
+### `mount(target, value)`
+
+Mounts any renderable value directly and returns a handle with `unmount()` for explicit teardown.
+
+### Context and Props
+
+- `createContext(defaultValue)` creates owner-scoped context
+- `provideContext(context, value, render)` injects a value for a subtree
+- `useContext(context)` reads the nearest provided value or the context default
+- `mergeProps(...sources)` lazily overlays prop sources
+- `splitProps(props, ...keysets)` creates reactive prop partitions without cloning
+
+### Control Flow and Portals
+
+- `Show({ when, children, fallback })` renders a truthy branch with the resolved value
+- `Match({ when, children })` defines a case for `Switch()`
+- `Switch(cases, fallback)` selects the first truthy `Match()`
+- `Portal(target, children)` renders a subtree into another DOM container while preserving cleanup ownership
+
+### Compiler Exports
+
+- `guiVitePlugin()` wires compile-assisted templates into Vite
+- `guiEsbuildPlugin()` wires compile-assisted templates into esbuild
+- `transformGuiTemplates()` exposes the raw template transform for custom tooling
 
 ### Debugging and Devtools
 
@@ -301,6 +338,7 @@ See [ROADMAP.md](./ROADMAP.md) for the full roadmap.
 ## Package
 
 - NPM: `@bragamateus/gui`
+- GitHub Packages: `@gadevsbr/gui`
 - License: [MIT](./LICENSE)
 
 ## Development
