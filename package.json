@@ -4,6 +4,10 @@
   "description": "Minimal performance-first UI runtime with fine-grained reactivity and direct DOM bindings.",
   "license": "MIT",
   "author": "Mateus Braga",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gadevsbr/gUI.git"
+  },
   "type": "module",
   "keywords": [
     "gui",
@@ -59,6 +63,7 @@
   "scripts": {
     "check": "node scripts/check-devtools.mjs && node scripts/check-compiler.mjs && node scripts/check-syntax.mjs",
     "pack:dry-run": "npm pack --dry-run",
+    "publish:github": "npm publish --registry https://npm.pkg.github.com",
     "prepublishOnly": "npm run check && npm test",
     "prepack": "node scripts/swap-readme.mjs npm",
     "postpack": "node scripts/swap-readme.mjs restore",
