@@ -15,7 +15,7 @@ export default defineConfig({
         "gui/compiler/shared.js",
         "gui/index.js"
       ],
-      reporter: ["text", "html"],
+      reporter: ["text", "html", "lcov"],
       thresholds: {
         lines: 80,
         functions: 80,
