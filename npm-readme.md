@@ -1,5 +1,10 @@
 # gUI
 
+[![npm version](https://img.shields.io/npm/v/%40bragamateus%2Fgui?label=npm)](https://www.npmjs.com/package/@bragamateus/gui)
+[![license](https://img.shields.io/github/license/gadevsbr/gUI)](https://github.com/gadevsbr/gUI/blob/main/LICENSE)
+[![docs](https://img.shields.io/badge/docs-live-0d7c6b)](https://gadevsbr.github.io/gUI/)
+[![wiki](https://img.shields.io/badge/wiki-available-2359cc)](https://github.com/gadevsbr/gUI/wiki)
+
 Build interfaces with fine-grained reactivity, keyed ownership, and direct DOM bindings.
 
 gUI is a performance-first UI runtime for developers who want exact DOM updates instead of broad component rerenders.
