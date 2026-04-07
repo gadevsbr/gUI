@@ -1,0 +1,57 @@
+name: Feature Request
+description: Propose an API, runtime, compiler, devtools, or documentation improvement.
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please frame feature requests in terms of problem, constraints, and tradeoffs.
+
+        gUI intentionally avoids a rerender-driven architecture. Requests that rely on full component rerenders, virtual DOM diffing, hook dependency arrays, or proxy-based deep tracking are unlikely to fit the project direction.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem statement
+      description: What are you trying to do, and what is currently missing or painful?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: Describe the API, behavior, or workflow you want.
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Runtime / reactivity
+        - Rendering / templates
+        - List / control flow / portal
+        - Composition API
+        - Compiler
+        - Devtools / inspector
+        - Documentation
+        - Benchmark / tooling
+    validations:
+      required: true
+  - type: textarea
+    id: tradeoffs
+    attributes:
+      label: Tradeoffs and constraints
+      description: What would this change cost in complexity, performance, or API surface?
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Existing workaround, competing design, or why current APIs are not enough.
+  - type: textarea
+    id: examples
+    attributes:
+      label: Example usage
+      description: Optional code or pseudo-code.
+

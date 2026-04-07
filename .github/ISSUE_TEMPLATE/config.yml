@@ -1,0 +1,9 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security report
+    url: mailto:gadevs2020@gmail.com
+    about: Report security issues privately instead of opening a public issue.
+  - name: Project wiki
+    url: https://github.com/gadevsbr/gUI/wiki
+    about: Read the setup, API, compiler, devtools, and development guides before opening a question.
+
