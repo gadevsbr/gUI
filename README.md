@@ -4,6 +4,7 @@
 [![license](https://img.shields.io/github/license/gadevsbr/gUI)](./LICENSE)
 [![docs](https://img.shields.io/badge/docs-live-0d7c6b)](https://gadevsbr.github.io/gUI/)
 [![wiki](https://img.shields.io/badge/wiki-available-2359cc)](https://github.com/gadevsbr/gUI/wiki)
+[![codecov](https://codecov.io/github/gadevsbr/gUI/graph/badge.svg?token=6H7DILR5I3)](https://codecov.io/github/gadevsbr/gUI)
 
 gUI is a performance-first JavaScript UI runtime for teams that want exact DOM updates, stable ownership, and a smaller mental model than rerender-driven frameworks.
 
