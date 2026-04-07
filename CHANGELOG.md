@@ -4,6 +4,15 @@ All notable changes to gUI will be documented in this file.
 
 ## Unreleased
 
+## 1.2.1 - 2026-04-07
+
+### Changed
+
+- Refreshed the GitHub and npm READMEs to match the current `1.2.x` public API, package names, and installation guidance.
+- Republished the package so the npm package page reflects the updated README content.
+
+## 1.2.0 - 2026-04-07
+
 ### Added
 
 - Comprehensive unit test suite with 180+ tests using Vitest and `happy-dom` to ensure rigorous DOM rendering, fine-grained reactivity graph and compiler stability. 
