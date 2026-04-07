@@ -47,11 +47,81 @@ export interface AppHandle {
   unmount(): void;
 }
 
+export interface Context<T> {
+  id: string;
+  label: string;
+  defaultValue: T;
+  Provider(value: T, render: (() => unknown) | unknown): TemplateResult;
+}
+
+export interface MatchCase<T = unknown> {
+  when: T | Signal<T> | Computed<T> | (() => T);
+  children: ((value: T) => unknown) | unknown;
+}
+
+export interface DomUpdateSourceSummary {
+  id: string;
+  kind: string;
+  label: string;
+}
+
+export interface DomUpdateOwnerSummary {
+  id: string;
+  label: string;
+}
+
+export interface DomUpdateOriginSummary {
+  id: string;
+  kind: string;
+  label?: string;
+  version: number;
+  dirty: boolean;
+  initialized: boolean;
+  sourceCount: number;
+  subscriberCount: number;
+  owner: DomUpdateOwnerSummary | null;
+  sources: DomUpdateSourceSummary[];
+}
+
+export interface DomUpdateEvent {
+  type: "text" | "attribute" | "structure";
+  timestamp: number;
+  origin: DomUpdateOriginSummary | null;
+  node?: Node;
+  element?: Element;
+  name?: string;
+  value?: unknown;
+  action?: "insert" | "move" | "remove";
+  anchor?: Node;
+  rect?: {
+    top: number;
+    left: number;
+    width: number;
+    height: number;
+  } | null;
+}
+
 export interface ListBinding<T> {
   readonly source: T[] | Signal<T[]> | Computed<T[]> | (() => T[]);
 }
 
 export declare function signal<T>(initialValue: T, options?: { label?: string }): Signal<T>;
+
+export declare function createContext<T>(defaultValue: T, options?: { label?: string }): Context<T>;
+
+export declare function provideContext<T>(
+  context: Context<T>,
+  value: T,
+  render: (() => unknown) | unknown,
+): TemplateResult;
+
+export declare function useContext<T>(context: Context<T>): T;
+
+export function mergeProps<T extends Record<string, any>>(...sources: (Partial<T> | undefined | null)[]): T;
+export function splitProps<T extends Record<string, any>, K extends (keyof T)[]>(
+  props: T,
+  ...keysets: [...K[]]
+): [...Record<string, any>[], Record<string, any>];
 
 export declare function computed<T>(
   compute: () => T,
@@ -67,12 +137,37 @@ export declare function html(
 
 export declare function isTemplateResult(value: unknown): value is TemplateResult;
 
+export declare function Show<T>(options: {
+  when: T | Signal<T> | Computed<T> | (() => T);
+  children: ((value: T) => unknown) | unknown;
+  fallback?: ((value: T) => unknown) | unknown;
+}): () => unknown;
+
+export declare function Match<T>(options: MatchCase<T>): MatchCase<T>;
+
+export declare function Switch<T>(
+  source:
+    | MatchCase<T>[]
+    | {
+        cases?: MatchCase<T>[];
+        children?: MatchCase<T>[];
+        fallback?: (() => unknown) | unknown;
+      },
+  fallback?: (() => unknown) | unknown,
+): () => unknown;
+
 export declare function list<T>(
   source: T[] | Signal<T[]> | Computed<T[]> | (() => T[]),
   key: ((item: T, index: number) => unknown) | keyof T,
   render: (item: Signal<T>, index: Signal<number>, key: unknown) => unknown,
   options?: { label?: string },
 ): ListBinding<T>;
+
+export declare function Portal(
+  target: string | Element | DocumentFragment | (() => string | Element | DocumentFragment | null) | Signal<string | Element | DocumentFragment | null> | Computed<string | Element | DocumentFragment | null>,
+  children: (() => unknown) | unknown,
+  options?: { label?: string },
+): TemplateResult;
 
 export declare function mount(target: string | Node, value: unknown): MountHandle;
 
@@ -82,15 +177,7 @@ export declare function createApp(
 ): AppHandle;
 
 export declare function setDomUpdateHook(
-  hook:
-    | ((payload: {
-        type: "text" | "attribute" | "structure";
-        node?: Node;
-        element?: Element;
-        name?: string;
-        value?: unknown;
-        action?: "insert" | "remove";
-        anchor?: Node;
-      }) => void)
-    | null,
+  hook: ((payload: DomUpdateEvent) => void) | null,
 ): void;
+
+export declare function subscribeDomUpdates(listener: (payload: DomUpdateEvent) => void): () => void;

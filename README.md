@@ -32,6 +32,7 @@ This makes gUI a strong fit for:
 - Scoped disposal for swapped dynamic subtrees
 - Microtask-based batching with deduped subscriber scheduling
 - Debug hooks for inspecting actual DOM writes
+- Optional visual inspector with overlays for exact writes, keyed moves, cleanup, and flushes
 - Official docs site with tutorials, recipes, API reference, performance notes, and a live playground
 - Browser demo and benchmark harness
 - ESM package with TypeScript declarations
@@ -52,7 +53,8 @@ The project site is live at:
 
 Use it when you want the higher-level view of the framework before reading source code. It includes
 tutorials, implementation notes, API reference, recipes, roadmap context, and an interactive
-playground that shows how gUI updates exact DOM bindings in real time.
+playground that shows how gUI updates exact DOM bindings in real time. The docs site, runtime
+demo, and benchmark now ship with the visual inspector enabled by default.
 
 Quick access:
 
@@ -116,6 +118,33 @@ await build({
   plugins: [guiEsbuildPlugin()],
 });
 ```
+
+## Visual Inspector
+
+gUI now ships with an official visual inspector for turning runtime behavior into something you can
+actually see.
+
+It is fully opt-in. Importing `@bragamateus/gui` does not mount any visual tooling by default.
+The inspector only exists when you explicitly import `@bragamateus/gui/devtools` and call
+`createInspector()`.
+
+```js
+import { createInspector } from "@bragamateus/gui/devtools";
+
+createInspector({
+  target: "#app",
+  title: "Live DOM Lens",
+});
+```
+
+What it shows:
+
+- exact text, attribute, insert, move, and remove work
+- the binding or subscriber responsible for the DOM write
+- source labels connected to that flush
+- cleanup cycles, computed refreshes, and subscriber execution in one timeline
+
+This is the fastest way to prove that gUI is updating bindings instead of rerendering whole trees.
 
 ## Quick Example
 
@@ -195,6 +224,12 @@ Creates keyed structural bindings. Each key gets stable ownership, so reorders m
 
 Runs the component once, mounts the result, and keeps future work inside bindings, signals, computeds, effects, and keyed owners.
 
+### Debugging and Devtools
+
+- `setDomUpdateHook(fn)` keeps the legacy single-listener DOM write hook
+- `subscribeDomUpdates(fn)` lets multiple tools observe exact DOM writes concurrently
+- `createInspector(options)` from `@bragamateus/gui/devtools` turns those streams into overlays and runtime timeline entries
+
 ## Performance Model
 
 gUI is optimized around a simple rule: state changes should trigger only the work that is truly necessary.
@@ -227,9 +262,9 @@ removes most of that boilerplate without changing the runtime model.
 
 The repository includes:
 
-- `https://gadevsbr.github.io/gUI/`: docs site with tutorials, API reference, recipes, and the interactive playground
-- `https://gadevsbr.github.io/gUI/demo/`: public runtime demo for direct bindings, keyed rows, and scoped disposal
-- `https://gadevsbr.github.io/gUI/benchmark/`: public browser harness for text bursts, keyed reorders, and subtree cleanup cycles
+- `https://gadevsbr.github.io/gUI/`: docs site with tutorials, API reference, recipes, the playground, and the live inspector
+- `https://gadevsbr.github.io/gUI/demo/`: public runtime demo for direct bindings, keyed rows, scoped disposal, and inspector overlays
+- `https://gadevsbr.github.io/gUI/benchmark/`: public browser harness for text bursts, keyed reorders, cleanup cycles, and inspector timelines
 - [`index.html`](./index.html): source entry for the runtime demo
 - [`benchmark/index.html`](./benchmark/index.html): source entry for the benchmark harness
 
@@ -241,6 +276,7 @@ Run locally with any static server, then open those pages in the browser.
 gui/
   compiler/
   core/
+  devtools/
   reactivity/
   rendering/
   utils/
@@ -254,7 +290,8 @@ ROADMAP.md
 
 The current direction is:
 
-- deeper devtools and graph inspection
+- deeper graph inspection and reactive edge tracing
+- profiler-grade timelines that correlate flushes with DOM work
 - context and prop helpers that preserve one-time execution
 - compiler diagnostics and opt-out annotations for edge-case expressions
 - SSR and hydration without rerendering static DOM
@@ -272,4 +309,12 @@ Validate the codebase locally with:
 
 ```bash
 npm run check
+```
+
+Run the exhaustive unit test suite (built with Vitest + happy-dom) via:
+
+```bash
+npm test
+# Or to evaluate code coverage:
+npm run test:coverage
 ```

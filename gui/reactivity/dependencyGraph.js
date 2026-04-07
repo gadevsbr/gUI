@@ -5,8 +5,100 @@ let activeSubscriber = null;
 let currentOwner = null;
 let templateCaptureDepth = 0;
 let nextId = 0;
+const runtimeListeners = new Set();
 
 const TOKEN_FLAG = Symbol("gui.reactive.token");
+
+function getNow() {
+  if (typeof performance !== "undefined" && typeof performance.now === "function") {
+    return performance.now();
+  }
+
+  return Date.now();
+}
+
+function measureDuration(startedAt) {
+  return Number((getNow() - startedAt).toFixed(2));
+}
+
+function summarizeValue(value) {
+  if (value === null) {
+    return "null";
+  }
+
+  if (value === undefined) {
+    return "undefined";
+  }
+
+  if (typeof value === "string") {
+    return value.length > 72 ? `${value.slice(0, 69)}...` : value;
+  }
+
+  if (typeof value === "number" || typeof value === "boolean" || typeof value === "bigint") {
+    return String(value);
+  }
+
+  if (typeof value === "function") {
+    return value.name ? `fn ${value.name}()` : "anonymous function";
+  }
+
+  if (Array.isArray(value)) {
+    return `Array(${value.length})`;
+  }
+
+  if (typeof value === "object") {
+    const tag = value.constructor?.name ?? "Object";
+    return tag === "Object" ? "Object" : tag;
+  }
+
+  return String(value);
+}
+
+function describeOwnerSnapshot(owner) {
+  if (!owner) {
+    return null;
+  }
+
+  return {
+    id: owner.id,
+    label: owner.label,
+  };
+}
+
+function describeSources(node) {
+  if (!node?.sources) {
+    return [];
+  }
+
+  return Array.from(node.sources).map((source) => ({
+    id: source.id,
+    kind: source.kind,
+    label: source.label ?? source.id,
+  }));
+}
+
+function describeRuntimeNode(node) {
+  return {
+    ...describeNode(node),
+    owner: describeOwnerSnapshot(node.owner),
+    sources: describeSources(node),
+  };
+}
+
+function emitRuntimeEvent(payload) {
+  if (runtimeListeners.size === 0) {
+    return;
+  }
+
+  const event = {
+    timestamp: getNow(),
+    ...payload,
+  };
+
+  for (const listener of Array.from(runtimeListeners)) {
+    listener(event);
+  }
+}
 
 export function createNodeId(prefix) {
   nextId += 1;
@@ -20,6 +112,7 @@ export function createOwner(label = "owner") {
     label,
     parent,
     children: new Set(),
+    contexts: new Map(),
     disposables: new Set(),
     disposed: false,
   };
@@ -46,6 +139,22 @@ export function getCurrentOwner() {
   return currentOwner;
 }
 
+export function describeActiveExecution() {
+  return activeSubscriber ? describeRuntimeNode(activeSubscriber) : null;
+}
+
+export function subscribeRuntimeEvents(listener) {
+  if (typeof listener !== "function") {
+    return () => {};
+  }
+
+  runtimeListeners.add(listener);
+
+  return () => {
+    runtimeListeners.delete(listener);
+  };
+}
+
 export function registerDisposable(dispose) {
   const owner = currentOwner;
 
@@ -64,6 +173,13 @@ export function disposeOwner(owner) {
   if (!owner || owner.disposed) {
     return;
   }
+
+  emitRuntimeEvent({
+    type: "owner:dispose",
+    owner: describeOwnerSnapshot(owner),
+    childCount: owner.children.size,
+    disposableCount: owner.disposables.size,
+  });
 
   owner.disposed = true;
 
@@ -219,6 +335,11 @@ export function writeSignalNode(node, nextValue) {
 
   node.current = nextValue;
   node.version += 1;
+  emitRuntimeEvent({
+    type: "signal:write",
+    node: describeRuntimeNode(node),
+    valueSummary: summarizeValue(nextValue),
+  });
   invalidateSubscribers(node.subscribers);
   return nextValue;
 }
@@ -240,6 +361,7 @@ export function refreshComputed(node) {
   activeSubscriber = node;
   currentOwner = node.owner ?? null;
   node.running = true;
+  const startedAt = getNow();
 
   try {
     const nextValue = node.compute();
@@ -254,6 +376,13 @@ export function refreshComputed(node) {
     }
 
     captureSourceVersions(node);
+    emitRuntimeEvent({
+      type: "computed:refresh",
+      node: describeRuntimeNode(node),
+      changed,
+      durationMs: measureDuration(startedAt),
+      valueSummary: summarizeValue(nextValue),
+    });
     return node.current;
   } finally {
     node.running = false;
@@ -279,8 +408,13 @@ export function executeSubscriber(node) {
 
   node.pending = false;
   node.running = true;
+  const startedAt = getNow();
 
   if (node.cleanup) {
+    emitRuntimeEvent({
+      type: "subscriber:cleanup",
+      node: describeRuntimeNode(node),
+    });
     node.cleanup();
     node.cleanup = null;
   }
@@ -297,6 +431,12 @@ export function executeSubscriber(node) {
     node.cleanup = typeof cleanup === "function" ? cleanup : null;
     node.initialized = true;
     captureSourceVersions(node);
+    emitRuntimeEvent({
+      type: "subscriber:flush",
+      node: describeRuntimeNode(node),
+      durationMs: measureDuration(startedAt),
+      hasCleanup: Boolean(node.cleanup),
+    });
   } finally {
     activeSubscriber = previousSubscriber;
     currentOwner = previousOwner;
@@ -308,6 +448,11 @@ export function disposeSubscriber(node) {
   if (!node || node.disposed) {
     return;
   }
+
+  emitRuntimeEvent({
+    type: "subscriber:dispose",
+    node: describeRuntimeNode(node),
+  });
 
   node.disposed = true;
   node.pending = false;
@@ -409,6 +554,10 @@ function invalidateSubscriber(node) {
     }
 
     node.dirty = true;
+    emitRuntimeEvent({
+      type: "computed:invalidate",
+      node: describeRuntimeNode(node),
+    });
     invalidateSubscribers(node.subscribers);
     return;
   }

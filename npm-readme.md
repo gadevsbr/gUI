@@ -26,6 +26,7 @@ npm install @bragamateus/gui
 - Reconciles keyed lists by moving existing DOM nodes in place
 - Disposes nested effects and listeners when dynamic subtrees leave the DOM
 - Ships an optional compiler for automatic non-event expression capture
+- Ships `@bragamateus/gui/devtools` for visual runtime inspection
 - Avoids virtual DOM diffing and hook-style dependency choreography
 
 ## Example
@@ -71,6 +72,18 @@ createApp("#app", App);
 - `list(source, key, render)` creates keyed structural bindings
 - `createApp(target, component)` mounts a component once
 - `@bragamateus/gui/compiler` exposes the optional template compiler for Vite and esbuild
+- `@bragamateus/gui/devtools` exposes the visual inspector for overlays and runtime timelines
+
+## Visual Inspector
+
+```js
+import { createInspector } from "@bragamateus/gui/devtools";
+
+createInspector({
+  target: "#app",
+  title: "Live DOM Lens",
+});
+```
 
 ## Runtime Model
 

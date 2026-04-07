@@ -1,1 +1,6 @@
 .readme.github.backup.md
+node_modules/
+coverage/
+.gemini/
+.env*
+.DS_Store

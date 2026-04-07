@@ -34,6 +34,7 @@ jobs:
           cp -R benchmark/. dist-pages/benchmark/
           cp index.html dist-pages/demo/index.html
           sed -i 's#\.\./gui/index\.js#./gui/index.js#' dist-pages/main.js
+          sed -i 's#\.\./gui/devtools/index\.js#./gui/devtools/index.js#' dist-pages/main.js
           sed -i 's#\./demo/styles\.css#./styles.css#' dist-pages/demo/index.html
           sed -i 's#\./demo/main\.js#./main.js#' dist-pages/demo/index.html
           sed -i 's#\./benchmark/index\.html#../benchmark/index.html#' dist-pages/demo/index.html

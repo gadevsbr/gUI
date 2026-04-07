@@ -1,4 +1,5 @@
 import { computed, createApp, effect, html, setDomUpdateHook, signal } from "../gui/index.js";
+import { createInspector } from "../gui/devtools/index.js";
 import {
   apiReference,
   codeSamples,
@@ -21,6 +22,7 @@ import {
 
 const activeSection = signal("overview", { label: "activeSection" });
 const mobileNavOpen = signal(false, { label: "mobileNavOpen" });
+const siteDevtoolsEnabled = signal(true, { label: "siteDevtoolsEnabled" });
 const selectedTutorial = signal(tutorials[0].id, { label: "selectedTutorial" });
 const selectedRecipe = signal(recipes[0].id, { label: "selectedRecipe" });
 const selectedPreset = signal(playgroundPresets[0].id, { label: "selectedPreset" });
@@ -46,6 +48,34 @@ const moduleCatalog = [
   "Mounting",
   "Debug hook",
 ];
+const playgroundRuntimeLabels = [
+  "selectedPreset",
+  "siteDevtoolsEnabled",
+  "playgroundCount",
+  "playgroundLabel",
+  "playgroundTone",
+  "playgroundQuery",
+  "domWriteCount",
+  "domWriteLog",
+  "currentPreset",
+  "counterDouble",
+  "counterParity",
+  "toneChipClass",
+  "toneLabel",
+  "filteredModules",
+];
+
+function matchesRuntimeLabels(event, labels) {
+  const haystack = [
+    event.node?.label,
+    event.owner?.label,
+    ...(event.node?.sources ?? []).map((source) => source.label),
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  return labels.some((label) => haystack.includes(label));
+}
 
 const currentTutorial = computed(
   () => tutorials.find((item) => item.id === selectedTutorial.value) ?? tutorials[0],
@@ -383,6 +413,14 @@ function App() {
           >
             ${() => (mobileNavOpen.value ? "Close menu" : "Open menu")}
           </button>
+          <button
+            class="ghost-button"
+            on:click=${() => {
+              siteDevtoolsEnabled.value = !siteDevtoolsEnabled.value;
+            }}
+          >
+            ${() => (siteDevtoolsEnabled.value ? "Disable Devtools" : "Enable Devtools")}
+          </button>
           <a class="ghost-button" href="./demo/">Runtime Demo</a>
           <a class="ghost-button" href="./benchmark/">Benchmark</a>
           <a class="ghost-button" href="#api" on:click=${() => setSection("api")}>API Reference</a>
@@ -614,7 +652,7 @@ function App() {
               </div>
               <p class="section-copy">
                 Switch between presets to see how gUI handles text bindings, attribute updates, and
-                computed filtering while the DOM write log stays scoped to the preview only.
+                computed filtering while the DOM write log and inspector stay scoped to the preview only.
               </p>
               <div class="section-actions">
                 <a class="ghost-button" href="./demo/">Open Runtime Demo</a>
@@ -849,6 +887,39 @@ function App() {
 }
 
 createApp("#app", App);
+
+let siteInspector = null;
+
+effect(() => {
+  if (!siteDevtoolsEnabled.value) {
+    if (siteInspector) {
+      siteInspector.destroy();
+      siteInspector = null;
+    }
+
+    return;
+  }
+
+  if (siteInspector) {
+    return;
+  }
+
+  siteInspector = createInspector({
+    title: "Playground Inspector",
+    subtitle: "Make gUI updates visible while you switch presets and touch the runtime.",
+    target: "[data-playground-root='true']",
+    position: "bottom-right",
+    maxEntries: 16,
+    runtimeEventFilter: (event) => matchesRuntimeLabels(event, playgroundRuntimeLabels),
+    onDestroy() {
+      siteInspector = null;
+
+      if (siteDevtoolsEnabled.peek()) {
+        siteDevtoolsEnabled.value = false;
+      }
+    },
+  });
+});
 
 setDomUpdateHook((event) => {
   const host =

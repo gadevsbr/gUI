@@ -1,4 +1,5 @@
 import { computed, createApp, effect, html, list, setDomUpdateHook, signal } from "../gui/index.js";
+import { createInspector } from "../gui/devtools/index.js";
 
 function createMetric(id, label, value) {
   return { id, label, value };
@@ -17,6 +18,7 @@ const count = signal(0, { label: "count" });
 const title = signal("High-performance DOM bindings", { label: "title" });
 const theme = signal("signal", { label: "theme" });
 const metrics = signal(createInitialMetrics(), { label: "metrics" });
+const devtoolsEnabled = signal(true, { label: "demoDevtoolsEnabled" });
 const showInspector = signal(true, { label: "showInspector" });
 const rowSetups = signal(0, { label: "rowSetups" });
 const activeRowScopes = signal(0, { label: "activeRowScopes" });
@@ -39,6 +41,37 @@ const metricTotal = computed(
 
 let appExecutions = 0;
 let nextMetricId = 5;
+const demoRuntimeLabels = [
+  "count",
+  "title",
+  "theme",
+  "metrics",
+  "demoDevtoolsEnabled",
+  "showInspector",
+  "rowSetups",
+  "activeRowScopes",
+  "disposedRowScopes",
+  "detailMounts",
+  "activeDetailScopes",
+  "disposedDetailScopes",
+  "double",
+  "parity",
+  "badgeClass",
+  "metricOrder",
+  "metricTotal",
+];
+
+function matchesRuntimeLabels(event, labels) {
+  const haystack = [
+    event.node?.label,
+    event.owner?.label,
+    ...(event.node?.sources ?? []).map((source) => source.label),
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  return labels.some((label) => haystack.includes(label));
+}
 
 effect(() => {
   document.title = `gUI demo - count ${count.value}`;
@@ -173,6 +206,17 @@ function App() {
         <div class="setup-metric">
           <span class="metric-label">App executions</span>
           <strong class="metric-value" data-label="setup-count">${appExecutions}</strong>
+        </div>
+
+        <div class="controls controls--dense">
+          <button
+            class="action"
+            on:click=${() => {
+              devtoolsEnabled.value = !devtoolsEnabled.value;
+            }}
+          >
+            ${() => (devtoolsEnabled.value ? "Disable devtools" : "Enable devtools")}
+          </button>
         </div>
       </section>
 
@@ -330,6 +374,39 @@ function App() {
 }
 
 createApp("#app", App);
+
+let demoInspector = null;
+
+effect(() => {
+  if (!devtoolsEnabled.value) {
+    if (demoInspector) {
+      demoInspector.destroy();
+      demoInspector = null;
+    }
+
+    return;
+  }
+
+  if (demoInspector) {
+    return;
+  }
+
+  demoInspector = createInspector({
+    title: "Runtime Inspector",
+    subtitle: "Overlay exact writes, keyed movement, cleanup, and reactive flushes.",
+    target: "#app",
+    position: "bottom-right",
+    maxEntries: 18,
+    runtimeEventFilter: (event) => matchesRuntimeLabels(event, demoRuntimeLabels),
+    onDestroy() {
+      demoInspector = null;
+
+      if (devtoolsEnabled.peek()) {
+        devtoolsEnabled.value = false;
+      }
+    },
+  });
+});
 
 const updatesElement = document.querySelector("#updates");
 const updateCountElement = document.querySelector("#update-count");

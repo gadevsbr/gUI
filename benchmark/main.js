@@ -1,4 +1,5 @@
 import { computed, createApp, effect, html, list, setDomUpdateHook, signal } from "../gui/index.js";
+import { createInspector } from "../gui/devtools/index.js";
 
 function createRow(index) {
   return {
@@ -22,6 +23,7 @@ const benchCount = signal(0, { label: "benchCount" });
 const benchRows = signal(createRows(HARNESS_SIZE), { label: "benchRows" });
 const benchVisible = signal(true, { label: "benchVisible" });
 const benchResults = signal([], { label: "benchResults" });
+const benchDevtoolsEnabled = signal(true, { label: "benchDevtoolsEnabled" });
 const runState = signal("idle", { label: "runState" });
 const activeDetailScopes = signal(0, { label: "benchActiveDetailScopes" });
 const disposedDetailScopes = signal(0, { label: "benchDisposedDetailScopes" });
@@ -35,6 +37,32 @@ const rowTotal = computed(
 
 let nextResultId = 1;
 let collector = null;
+const benchmarkRuntimeLabels = [
+  "benchCount",
+  "benchRows",
+  "benchVisible",
+  "benchResults",
+  "benchDevtoolsEnabled",
+  "runState",
+  "benchActiveDetailScopes",
+  "benchDisposedDetailScopes",
+  "benchRowSetups",
+  "visibleRows",
+  "rowTotal",
+  "benchmark",
+];
+
+function matchesRuntimeLabels(event, labels) {
+  const haystack = [
+    event.node?.label,
+    event.owner?.label,
+    ...(event.node?.sources ?? []).map((source) => source.label),
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  return labels.some((label) => haystack.includes(label));
+}
 
 function eventHost(event) {
   return event.type === "text"
@@ -245,6 +273,14 @@ function App() {
           <button class="action" on:click=${runTextBurst}>Run text burst</button>
           <button class="action" on:click=${runKeyedReorder}>Run keyed reorder</button>
           <button class="action" on:click=${runScopedDisposal}>Run scoped disposal</button>
+          <button
+            class="action action--ghost"
+            on:click=${() => {
+              benchDevtoolsEnabled.value = !benchDevtoolsEnabled.value;
+            }}
+          >
+            ${() => (benchDevtoolsEnabled.value ? "Disable devtools" : "Enable devtools")}
+          </button>
         </div>
       </section>
 
@@ -384,6 +420,39 @@ function App() {
 }
 
 createApp("#app", App);
+
+let benchmarkInspector = null;
+
+effect(() => {
+  if (!benchDevtoolsEnabled.value) {
+    if (benchmarkInspector) {
+      benchmarkInspector.destroy();
+      benchmarkInspector = null;
+    }
+
+    return;
+  }
+
+  if (benchmarkInspector) {
+    return;
+  }
+
+  benchmarkInspector = createInspector({
+    title: "Harness Inspector",
+    subtitle: "Track batching, keyed movement, scope disposal, and flush cadence.",
+    target: "#bench-app",
+    position: "bottom-left",
+    maxEntries: 20,
+    runtimeEventFilter: (event) => matchesRuntimeLabels(event, benchmarkRuntimeLabels),
+    onDestroy() {
+      benchmarkInspector = null;
+
+      if (benchDevtoolsEnabled.peek()) {
+        benchDevtoolsEnabled.value = false;
+      }
+    },
+  });
+});
 
 window.guiBenchmark = {
   runSuite,

@@ -2,7 +2,7 @@ import { readdir } from "node:fs/promises";
 import { resolve, extname } from "node:path";
 import { spawnSync } from "node:child_process";
 
-const roots = ["gui", "demo", "benchmark", "scripts"];
+const roots = ["gui", "demo", "benchmark", "website", "scripts"];
 const syntaxExtensions = new Set([".js", ".mjs"]);
 
 async function collectFiles(directory) {

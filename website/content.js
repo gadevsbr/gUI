@@ -53,7 +53,7 @@ export const featureHighlights = [
   {
     eyebrow: "Debugging",
     title: "Inspect the real graph and the real DOM writes",
-    body: "Signals and computeds expose snapshots, and the DOM update hook lets you verify what actually changed in the browser.",
+    body: "gUI now ships with an official visual inspector, DOM update subscriptions, and runtime snapshots so you can see exact writes, moves, flushes, and cleanups in the browser.",
   },
 ];
 
@@ -124,7 +124,7 @@ export const learningTracks = [
     label: "Track 03",
     title: "Runtime-minded engineering",
     audience: "Framework and library authors",
-    modules: ["Dependency graph", "Invalidation rules", "DOM ownership", "Future compiler path"],
+    modules: ["Dependency graph", "Invalidation rules", "DOM ownership", "Compiler and devtools path"],
   },
 ];
 
@@ -180,7 +180,7 @@ export const coreConcepts = [
     bullets: [
       "Use direct reads like `${count.value}` for simple bindings.",
       "Wrap complex expressions in getters or `computed()` when they need reactivity.",
-      "The compiler-assisted path is future work, not fake behavior in v1.",
+      "Use the optional compiler when you want richer template expressions without changing the runtime model.",
     ],
   },
 ];
@@ -195,13 +195,13 @@ export const tutorials = [
     goals: [
       "Understand the relationship between `signal()`, `computed()`, and `html`.",
       "Read reactive values directly in the template.",
-      "Use the DOM update hook to prove what changed.",
+      "Use the inspector and DOM update stream to prove what changed.",
     ],
     steps: [
       "Create a `count` signal and a `doubled` computed.",
       "Render both values in a template with a direct `on:click` increment handler.",
       "Mount the component once with `createApp()`.",
-      "Track DOM writes and observe that the component body is not rerun on every click.",
+      "Attach the inspector or a DOM update subscriber and observe that the component body is not rerun on every click.",
     ],
     outcome: "You end with a concrete understanding of why gUI updates bindings instead of rerendering components.",
   },
@@ -238,7 +238,7 @@ export const tutorials = [
     steps: [
       "Model navigation, selected tutorial, and API filtering as signals.",
       "Render static page chrome once and update content panes through narrow bindings.",
-      "Attach a DOM update hook to only the playground region.",
+      "Attach the official inspector to only the playground region.",
       "Use data arrays for tutorials, recipes, and API cards to keep the site maintainable.",
     ],
     outcome: "A complete docs shell that demonstrates the framework while documenting it.",
@@ -416,11 +416,31 @@ export const apiReference = [
   {
     name: "setDomUpdateHook(fn)",
     category: "Debugging",
-    summary: "Hooks into actual DOM writes so demos and tooling can inspect text, attribute, and structural updates.",
+    summary: "Sets the legacy single-listener DOM write hook for exact text, attribute, and structural updates.",
     details: [
-      "Ideal for visual demos and future devtools surfaces.",
-      "The hook receives granular payloads for the actual operation performed.",
+      "Useful when you want one direct callback for DOM writes.",
+      "The payload now carries timestamp, origin binding metadata, and structural move information.",
       "Filter by container when you only care about one mounted surface.",
+    ],
+  },
+  {
+    name: "subscribeDomUpdates(fn)",
+    category: "Debugging",
+    summary: "Subscribes to DOM write events without taking over the legacy singleton hook.",
+    details: [
+      "Ideal for tooling, overlays, timelines, and custom inspectors.",
+      "Multiple subscribers can observe the same exact DOM write stream concurrently.",
+      "Returns an unsubscribe function for teardown.",
+    ],
+  },
+  {
+    name: 'createInspector(options?) from "@bragamateus/gui/devtools"',
+    category: "Debugging",
+    summary: "Mounts the official gUI visual inspector with update overlays and a runtime timeline.",
+    details: [
+      "Highlights exact text, attribute, insert, move, and remove work in real time.",
+      "Shows runtime flushes, cleanup cycles, computed refreshes, and source labels alongside DOM writes.",
+      "Targets one mounted surface or playground region without forcing app rerenders.",
     ],
   },
 ];
@@ -462,7 +482,7 @@ export const performanceMatrix = [
   },
   {
     label: "Developer feedback loop",
-    gui: "Inspect graph and actual DOM writes",
+    gui: "Visual inspector, graph snapshots, and actual DOM writes",
     expensive: "Infer work indirectly from component reruns",
   },
 ];
@@ -472,17 +492,17 @@ export const roadmapMilestones = [
     phase: "Near-term",
     title: "Stronger ergonomics on top of the current runtime",
     items: [
-      "Keyed list helpers with stable item ownership",
-      "Scoped disposal for dynamic child templates",
+      "Official visual inspector with exact DOM overlays and runtime timeline",
+      "Published docs site, runtime demo, and benchmark harness",
       "Repeatable performance harness and micro-benchmarks",
     ],
   },
   {
     phase: "Mid-term",
-    title: "Compiler assistance without losing the direct-binding model",
+    title: "Deeper observability without losing the direct-binding model",
     items: [
-      "Compile-assisted template transforms for richer expression capture",
-      "Better devtools hooks for graph and flush inspection",
+      "Deeper graph inspection and reactive edge tracing",
+      "Profiling hooks that correlate subscriber flushes with DOM work",
       "Convenience helpers that preserve one-time component setup",
     ],
   },
@@ -516,11 +536,11 @@ export const faqItems = [
   },
   {
     question: "How do I prove that only exact nodes changed?",
-    answer: "Use `setDomUpdateHook()` and filter the payloads to the part of the app you want to inspect. The playground on this site demonstrates that pattern.",
+    answer: 'Use `createInspector()` from `@bragamateus/gui/devtools` for the visual overlay, or `subscribeDomUpdates()` / `setDomUpdateHook()` when you want the raw event stream. The playground on this site demonstrates that pattern.',
   },
   {
     question: "What is the biggest missing piece after v1?",
-    answer: "Compile-assisted templates and richer dynamic subtree ownership are the highest-value next steps for reducing explicit runtime tradeoffs while preserving the architecture.",
+    answer: "Deeper graph tooling, profiler-grade timelines, and higher-level composition helpers are now the highest-value next steps without giving up the one-time execution model.",
   },
 ];
 

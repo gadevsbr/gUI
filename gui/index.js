@@ -1,8 +1,12 @@
 export { createApp } from "./core/createApp.js";
 export { mount } from "./core/mount.js";
+export { createContext, provideContext, useContext } from "./composition/context.js";
+export { mergeProps, splitProps } from "./composition/props.js";
 export { signal } from "./reactivity/signal.js";
 export { computed } from "./reactivity/computed.js";
 export { effect } from "./reactivity/effect.js";
 export { html, isTemplateResult } from "./rendering/html.js";
+export { Match, Show, Switch } from "./rendering/controlFlow.js";
 export { list } from "./rendering/list.js";
-export { setDomUpdateHook } from "./rendering/domUpdater.js";
+export { Portal } from "./rendering/portal.js";
+export { setDomUpdateHook, subscribeDomUpdates } from "./rendering/domUpdater.js";

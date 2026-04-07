@@ -39,10 +39,25 @@ function isIdentifierPart(char) {
 }
 
 function createSyntaxError(message, source, index, id) {
-  const line = source.slice(0, index).split("\n").length;
+  const lines = source.split("\n");
+  const lineNum = source.slice(0, index).split("\n").length;
   const column = index - source.lastIndexOf("\n", index - 1);
-  const location = id ? `${id}:${line}:${column}` : `${line}:${column}`;
-  return new SyntaxError(`[gUI compiler] ${message} at ${location}.`);
+  const location = id ? `${id}:${lineNum}:${column}` : `${lineNum}:${column}`;
+  
+  const start = Math.max(0, lineNum - 3);
+  const end = Math.min(lines.length, lineNum + 2);
+  
+  let frame = "";
+  for (let i = start; i < end; i++) {
+    const isTargetLine = i + 1 === lineNum;
+    const prefix = isTargetLine ? "> " : "  ";
+    frame += `\n${prefix}${i + 1} | ${lines[i]}`;
+    if (isTargetLine) {
+      frame += `\n   | ${" ".repeat(Math.max(0, column - 1))}^`;
+    }
+  }
+
+  return new SyntaxError(`[gUI compiler] ${message} at ${location}.${frame}\n`);
 }
 
 function consumeLineComment(source, start) {
@@ -686,6 +701,10 @@ function shouldWrapExpression(source, attributeName) {
   const trimmed = source.trim();
 
   if (trimmed.length === 0) {
+    return false;
+  }
+
+  if (/^\/\*\s*gui:(ignore|skip)\s*\*\//.test(trimmed)) {
     return false;
   }
 
