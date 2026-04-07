@@ -1,6 +1,6 @@
 {
   "name": "@bragamateus/gui",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Minimal performance-first UI runtime with fine-grained reactivity and direct DOM bindings.",
   "license": "MIT",
   "author": "Mateus Braga",
