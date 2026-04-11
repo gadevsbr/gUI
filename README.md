@@ -105,9 +105,9 @@ Quick access:
 
 ## Update Note
 
-### v1.2.0
+### v1.2.x
 
-`1.2.0` is the current package line on npm and GitHub Packages.
+The `1.2.x` line is the current package line on npm and GitHub Packages.
 
 This version sharpens both the runtime and the debugging story:
 

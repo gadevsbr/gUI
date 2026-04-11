@@ -4,6 +4,12 @@ All notable changes to gUI will be documented in this file.
 
 ## Unreleased
 
+## 1.2.3 - 2026-04-11
+
+### Changed
+
+- Refreshed `npm-readme.md` so the npm package page matches the current `1.2.x` API surface, zero-build positioning, and release notes.
+
 ## 1.2.2 - 2026-04-11
 
 ### Added

@@ -4,10 +4,47 @@
 [![license](https://img.shields.io/github/license/gadevsbr/gUI)](https://github.com/gadevsbr/gUI/blob/main/LICENSE)
 [![docs](https://img.shields.io/badge/docs-live-0d7c6b)](https://gadevsbr.github.io/gUI/)
 [![wiki](https://img.shields.io/badge/wiki-available-2359cc)](https://github.com/gadevsbr/gUI/wiki)
+[![codecov](https://codecov.io/github/gadevsbr/gUI/graph/badge.svg?token=6H7DILR5I3)](https://codecov.io/github/gadevsbr/gUI)
 
-Build interfaces with fine-grained reactivity, keyed ownership, and direct DOM bindings.
+gUI is a performance-first JavaScript UI runtime for teams that want exact DOM updates, stable ownership, and a smaller mental model than rerender-driven frameworks.
 
-gUI is a performance-first UI runtime for developers who want exact DOM updates instead of broad component rerenders.
+It is built around fine-grained reactivity, direct subscriptions, and real DOM bindings. No virtual DOM diffing. No hook scheduler. No full component rerender loop.
+
+## Why gUI
+
+Most UI stacks make broad updates look cheap until the interface gets dense, stateful, or constantly moving.
+
+gUI takes the opposite position:
+
+- state changes should update only the exact bindings that depend on them
+- components should be setup functions, not rerender boundaries
+- structural changes should preserve keyed ownership instead of rebuilding rows
+- dynamic subtrees should clean up effects and listeners when they leave the DOM
+- performance should come from runtime architecture, not rescue work late in the project
+
+This makes gUI a strong fit for:
+
+- dashboards with fast-moving metrics
+- internal products where responsiveness matters
+- interactive surfaces that cannot afford rerender churn
+- teams that want explicit reactive flow and fewer hidden framework costs
+
+## What You Get
+
+- Fine-grained `signal()`, `computed()`, and `effect()` primitives
+- Tagged template rendering with direct text, attribute, and event bindings
+- First-class control flow with `Show()`, `Switch()`, `Match()`, and `Portal()`
+- Composition helpers with `createContext()`, `provideContext()`, `useContext()`, `mergeProps()`, and `splitProps()`
+- Optional compile-assisted templates for automatic expression capture
+- Keyed `list()` reconciliation with stable per-item ownership
+- Scoped disposal for swapped dynamic subtrees
+- `mount()` and `createApp()` helpers for one-time setup and controlled teardown
+- Microtask-based batching with deduped subscriber scheduling
+- DOM write instrumentation via `setDomUpdateHook()` and `subscribeDomUpdates()`
+- Optional visual inspector with overlays for exact writes, keyed moves, cleanup, and flushes
+- Official docs site with tutorials, recipes, API reference, performance notes, and a live playground
+- Browser demo and benchmark harness
+- ESM package with TypeScript declarations
 
 ## Install
 
@@ -21,76 +58,117 @@ GitHub Packages:
 npm install @gadevsbr/gui --registry=https://npm.pkg.github.com
 ```
 
-## Update Note
+## Zero-Build Mode
 
-### v1.2.0
+gUI runs directly in the browser without any build step, bundler, or JSX compiler. Add a single module script tag and you have a full reactive runtime:
 
-- Added the official `@bragamateus/gui/devtools` inspector for exact DOM overlays and runtime timelines
-- Added `subscribeDomUpdates()` for multi-listener DOM write observation
-- Expanded runtime instrumentation for text, attribute, insert, move, remove, cleanup, and flush events
-- Tightened package validation with the current Vitest + `happy-dom` test suite
+```html
+<!-- No npm. No build step. No toolchain. -->
+<script type="module">
+import { signal, html, createApp } from "https://esm.sh/@bragamateus/gui";
 
-## Why teams use it
-
-- Updates only the exact text nodes and attributes that changed
-- Keeps components as setup functions instead of rerender loops
-- Reconciles keyed lists by moving existing DOM nodes in place
-- Disposes nested effects and listeners when dynamic subtrees leave the DOM
-- Exposes control-flow and composition helpers without switching to a rerender model
-- Ships an optional compiler for automatic non-event expression capture
-- Ships `@bragamateus/gui/devtools` for visual runtime inspection
-- Avoids virtual DOM diffing and hook-style dependency choreography
-
-## Example
-
-```js
-import { createApp, computed, html, list, signal } from "@bragamateus/gui";
-
-const rows = signal([
-  { id: "latency", label: "Latency budget", value: 12 },
-  { id: "flush", label: "Flush stability", value: 3 },
-]);
-
-const total = computed(() => rows.value.reduce((sum, row) => sum + row.value, 0));
+const count = signal(0);
 
 function App() {
   return html`
     <section>
-      <h1>Runtime metrics</h1>
-      <p>Total: ${() => total.value}</p>
-
-      <ul>
-        ${list(rows, "id", (row, index) => html`
-          <li>
-            <span>${() => index.value + 1}</span>
-            <strong>${() => row.value.label}</strong>
-            <span>${() => row.value.value}</span>
-          </li>
-        `)}
-      </ul>
+      <h1>${count.value}</h1>
+      <button on:click=${() => (count.value += 1)}>+1</button>
     </section>
   `;
 }
 
 createApp("#app", App);
+</script>
 ```
 
-## Core API
+This works in **browser extensions**, **injected widgets**, **CMS pages**, and any context where adding a build pipeline is not feasible. The optional Vite/esbuild compiler plugin improves ergonomics for build-based projects but is never required.
 
-- `signal(initialValue)` creates reactive state
-- `computed(fn)` creates lazy cached derived state
-- `effect(fn)` runs tracked side effects with cleanup
-- `html\`...\`` binds dynamic DOM slots directly and `isTemplateResult(value)` detects template results
-- `list(source, key, render)` creates keyed structural bindings
-- `Show()`, `Match()`, and `Switch()` expose control-flow primitives
-- `Portal(target, children)` renders into another DOM container with scoped cleanup
-- `createContext()`, `provideContext()`, `useContext()`, `mergeProps()`, and `splitProps()` cover composition helpers
-- `mount(target, value)` mounts arbitrary renderables with explicit teardown
-- `createApp(target, component)` mounts a component once
-- `@bragamateus/gui/compiler` exposes `guiVitePlugin()`, `guiEsbuildPlugin()`, and `transformGuiTemplates()`
-- `@bragamateus/gui/devtools` exposes the visual inspector for overlays and runtime timelines
+## Website
+
+The project site is live at:
+
+- https://gadevsbr.github.io/gUI/
+- https://gadevsbr.github.io/gUI/demo/
+- https://gadevsbr.github.io/gUI/benchmark/
+
+Use it when you want the higher-level view of the framework before reading source code. It includes
+tutorials, implementation notes, API reference, recipes, roadmap context, and an interactive
+playground that shows how gUI updates exact DOM bindings in real time. The docs site, runtime
+demo, and benchmark now ship with the visual inspector enabled by default.
+
+Quick access:
+
+- Docs + tutorials + playground: `https://gadevsbr.github.io/gUI/`
+- Runtime demo: `https://gadevsbr.github.io/gUI/demo/`
+- Benchmark harness: `https://gadevsbr.github.io/gUI/benchmark/`
+
+## Update Note
+
+### v1.2.x
+
+The `1.2.x` line is the current package line on npm and GitHub Packages.
+
+This version sharpens both the runtime and the debugging story:
+
+- official `@bragamateus/gui/devtools` inspector for exact DOM overlays and runtime timelines
+- `subscribeDomUpdates()` for multi-listener DOM write observation alongside the legacy single-hook API
+- richer runtime instrumentation for text, attribute, insert, move, remove, cleanup, and flush events
+- strengthened package validation with a broad Vitest + `happy-dom` test suite
+
+The public API documented below now matches the code currently exported by the package, including
+composition helpers, control-flow primitives, portals, compiler hooks, and devtools.
+
+## Optional Compiler
+
+For build-based projects, gUI now ships an optional compiler that rewrites non-event `html\`...\``
+interpolations into getter functions automatically.
+
+That means code like this:
+
+```js
+html`<p>${count.value * 2}</p>`
+```
+
+can be compiled to the runtime-safe equivalent automatically:
+
+```js
+html`<p>${() => count.value * 2}</p>`
+```
+
+### Vite
+
+```js
+import { defineConfig } from "vite";
+import { guiVitePlugin } from "@bragamateus/gui/compiler";
+
+export default defineConfig({
+  plugins: [guiVitePlugin()],
+});
+```
+
+### esbuild
+
+```js
+import { build } from "esbuild";
+import { guiEsbuildPlugin } from "@bragamateus/gui/compiler";
+
+await build({
+  entryPoints: ["src/main.js"],
+  bundle: true,
+  outfile: "dist/main.js",
+  plugins: [guiEsbuildPlugin()],
+});
+```
 
 ## Visual Inspector
+
+gUI now ships with an official visual inspector for turning runtime behavior into something you can
+actually see.
+
+It is fully opt-in. Importing `@bragamateus/gui` does not mount any visual tooling by default.
+The inspector only exists when you explicitly import `@bragamateus/gui/devtools` and call
+`createInspector()`.
 
 ```js
 import { createInspector } from "@bragamateus/gui/devtools";
@@ -101,27 +179,243 @@ createInspector({
 });
 ```
 
-## Runtime Model
+What it shows:
+
+- exact text, attribute, insert, move, and remove work
+- the binding or subscriber responsible for the DOM write
+- source labels connected to that flush
+- cleanup cycles, computed refreshes, and subscriber execution in one timeline
+
+This is the fastest way to prove that gUI is updating bindings instead of rerendering whole trees.
+
+## Quick Example
+
+```js
+import { createApp, computed, html, list, signal } from "@bragamateus/gui";
+
+const count = signal(0);
+const rows = signal([
+  { id: "latency", label: "Latency budget", value: 12 },
+  { id: "flush", label: "Flush stability", value: 3 },
+]);
+
+const total = computed(() => rows.value.reduce((sum, row) => sum + row.value, 0));
+
+function renderRow(row, index) {
+  return html`
+    <li>
+      <span>${() => index.value + 1}</span>
+      <strong>${() => row.value.label}</strong>
+      <span>${() => row.value.value}</span>
+    </li>
+  `;
+}
+
+function App() {
+  return html`
+    <section>
+      <h1>${count.value}</h1>
+      <p>Total: ${() => total.value}</p>
+
+      <button on:click=${() => (count.value += 1)}>Increment</button>
+      <button
+        on:click=${() => {
+          rows.value = [...rows.value].reverse();
+        }}
+      >
+        Reverse rows
+      </button>
+
+      <ul>${list(rows, "id", renderRow)}</ul>
+    </section>
+  `;
+}
+
+createApp("#app", App);
+```
+
+## Core API
+
+### `signal(initialValue)`
+
+Creates mutable reactive state. Reads track the current subscriber. Writes notify only direct dependents.
+
+### `computed(fn)`
+
+Creates lazy cached derived state. Computeds recalculate only when tracked sources changed and the value is read again.
+
+### `effect(fn)`
+
+Runs tracked side effects with cleanup support. Effects are batched in microtasks and rerun only when their sources changed.
+
+### `createStore(initialValue)`
+
+Creates a deep reactive proxy that automatically tracks object properties and array mutations without needing a build step. Allows writing `${store.user.name}` directly in templates.
+
+### `batch(fn)`
+
+Suspends the microtask scheduler and groups multiple state mutations into a single synchronous flush.
+
+### `createResource(source?, fetcher)`
+
+Wraps an async fetcher function in a reactive `Store`, exposing `{ value, loading, error, refetch() }`. Automatically reruns when the reactive source changes.
+
+### `on(signal, transform?)`
+
+Ergonomic helper for forms. Instead of manual event handlers, bind a signal directly to an input event: `on:input=${on(query)}`.
+
+### `html\`...\``
+
+Compiles a template once per call site, clones real DOM nodes, and wires each dynamic slot directly to signals, computeds, or getter functions.
+
+`isTemplateResult(value)` is also exported when you need to distinguish gUI template results from plain values.
+
+### `list(source, key, render)`
+
+Creates keyed structural bindings. Each key gets stable ownership, so reorders move existing DOM nodes and per-item effects survive until that key actually leaves the list.
+
+`render` runs once per key and receives:
+
+- `item`: a `Signal<T>` for the current item value
+- `index`: a `Signal<number>` for the current position
+- `key`: the resolved key
+
+### `createApp(target, component)`
+
+Runs the component once, mounts the result, and keeps future work inside bindings, signals, computeds, effects, and keyed owners.
+
+### `mount(target, value)`
+
+Mounts any renderable value directly and returns a handle with `unmount()` for explicit teardown.
+
+### Context and Props
+
+- `createContext(defaultValue)` creates owner-scoped context
+- `provideContext(context, value, render)` injects a value for a subtree
+- `useContext(context)` reads the nearest provided value or the context default
+- `mergeProps(...sources)` lazily overlays prop sources
+- `splitProps(props, ...keysets)` creates reactive prop partitions without cloning
+
+### Control Flow and Portals
+
+- `Show({ when, children, fallback })` renders a truthy branch with the resolved value
+- `Match({ when, children })` defines a case for `Switch()`
+- `Switch(cases, fallback)` selects the first truthy `Match()`
+- `Portal(target, children)` renders a subtree into another DOM container while preserving cleanup ownership
+
+### Compiler Exports
+
+- `guiVitePlugin()` wires compile-assisted templates into Vite
+- `guiEsbuildPlugin()` wires compile-assisted templates into esbuild
+- `transformGuiTemplates()` exposes the raw template transform for custom tooling
+
+### Debugging and Devtools
+
+- `setDomUpdateHook(fn)` keeps the legacy single-listener DOM write hook
+- `subscribeDomUpdates(fn)` lets multiple tools observe exact DOM writes concurrently
+- `createInspector(options)` from `@bragamateus/gui/devtools` turns those streams into overlays and runtime timeline entries
+
+## Performance Model
 
 gUI is optimized around a simple rule: state changes should trigger only the work that is truly necessary.
 
-- Signals notify only direct dependents
-- Computeds stay lazy until read
-- Effects are batched in microtasks
-- DOM nodes are created once and updated in place
-- Keyed rows keep stable ownership across reorder
-- Swapped branches dispose nested scopes before removal
+- Signals notify only direct subscribers.
+- Computeds stay lazy and cached.
+- Effects are deduped and flushed in microtasks.
+- Text and attribute bindings update concrete DOM nodes in place.
+- Keyed list changes move existing nodes instead of rebuilding rows.
+- Disposed dynamic branches release nested effects and listeners before nodes are removed.
 
-## Important Note
+## Why Not SolidJS or Preact Signals?
 
-In runtime-only mode, complex inline expressions should still use `computed()` or getter
-functions. With `@bragamateus/gui/compiler`, most non-event interpolations are wrapped
-automatically during the build step.
+**SolidJS** is a complete application framework. It has JSX, a compiler, SSR, a router, and a large ecosystem. If you need all of that, SolidJS is the right choice.
 
-## Package Details
+**Preact Signals** is a state primitive that integrates with Preact's existing framework. It does not give you a standalone runtime without a build step.
+
+**gUI** is a focused reactive runtime. It has the same fine-grained reactive core (signal, computed, effect) but:
+
+- Requires **no build step** — runs from a CDN or local ESM file in a plain `<script type="module">`
+- Requires **no JSX** — uses an `html` tagged template that works in any browser today
+- Ships with **built-in devtools** — visual inspector, DOM update stream, and runtime snapshots
+- Has **keyed list reconciliation** with stable per-item ownership out of the box
+
+gUI is the right choice when you need a reactive runtime in a build-free context: browser extensions, embedded widgets, injected scripts, CMS pages, or any project where adding a bundler is friction, not a feature.
+
+## Important Constraint
+
+gUI supports two modes:
+
+- runtime-only mode
+- compile-assisted mode
+
+In runtime-only mode, JavaScript still evaluates expressions before the `html` tag receives them:
+
+- `${count.value}` is reactive during setup for primitives
+- `${() => count.value * 2}` is reactive
+- `${count.value * 2}` should use `computed()` or a getter function if it needs to update
+- object property access should usually live inside a getter function, for example `${() => row.value.label}`
+
+With the optional compiler enabled, most non-event interpolations are wrapped automatically, which
+removes most of that boilerplate without changing the runtime model.
+
+## Demo And Benchmarks
+
+The repository includes:
+
+- `https://gadevsbr.github.io/gUI/`: docs site with tutorials, API reference, recipes, the playground, and the live inspector
+- `https://gadevsbr.github.io/gUI/demo/`: public runtime demo for direct bindings, keyed rows, scoped disposal, and inspector overlays
+- `https://gadevsbr.github.io/gUI/benchmark/`: public browser harness for text bursts, keyed reorders, cleanup cycles, and inspector timelines
+- [`index.html`](https://github.com/gadevsbr/gUI/blob/main/index.html): source entry for the runtime demo
+- [`benchmark/index.html`](https://github.com/gadevsbr/gUI/blob/main/benchmark/index.html): source entry for the benchmark harness
+
+Run locally with any static server, then open those pages in the browser.
+
+## Project Structure
+
+```text
+gui/
+  compiler/
+  core/
+  devtools/
+  reactivity/
+  rendering/
+  utils/
+demo/
+benchmark/
+index.html
+ROADMAP.md
+```
+
+## Roadmap
+
+The current direction is:
+
+- deeper graph inspection and reactive edge tracing
+- profiler-grade timelines that correlate flushes with DOM work
+- context and prop helpers that preserve one-time execution
+- compiler diagnostics and opt-out annotations for edge-case expressions
+- SSR and hydration without rerendering static DOM
+
+See [ROADMAP.md](https://github.com/gadevsbr/gUI/blob/main/ROADMAP.md) for the full roadmap.
+
+## Package
 
 - NPM: `@bragamateus/gui`
 - GitHub Packages: `@gadevsbr/gui`
-- ESM
-- TypeScript declarations included
-- License: MIT
+- License: [MIT](https://github.com/gadevsbr/gUI/blob/main/LICENSE)
+
+## Development
+
+Validate the codebase locally with:
+
+```bash
+npm run check
+```
+
+Run the exhaustive unit test suite (built with Vitest + happy-dom) via:
+
+```bash
+npm test
+# Or to evaluate code coverage:
+npm run test:coverage
+```
