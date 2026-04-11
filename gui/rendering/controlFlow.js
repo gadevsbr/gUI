@@ -1,6 +1,6 @@
 import { isReactiveToken, runWithTemplateCapture } from "../reactivity/dependencyGraph.js";
 
-const MATCH = Symbol("gui.match");
+export const MATCH = Symbol("gui.match");
 
 function isReactiveSourceApi(value) {
   return Boolean(value && typeof value === "object" && value.__node);

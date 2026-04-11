@@ -82,6 +82,22 @@ export function on<T = string>(
   transform?: (value: string) => T
 ): (event: Event) => void;
 
+export interface RouteDefinition {
+  path: string;
+  children: ((params: Record<string, string>) => unknown) | unknown;
+}
+
+export function Route(options: { path: string }, children: ((params: Record<string, string>) => unknown) | unknown): MatchCase;
+
+export function Router(
+  options: { mode?: "hash" | "history", fallback?: (() => unknown) | unknown },
+  routes: RouteDefinition[]
+): () => unknown;
+
+export function push(path: string): void;
+export function replace(path: string): void;
+export function useRouter(): { readonly path: string; push: typeof push; replace: typeof replace };
+
 export interface MatchCase<T = unknown> {
   when: T | Signal<T> | Computed<T> | (() => T);
   children: ((value: T) => unknown) | unknown;

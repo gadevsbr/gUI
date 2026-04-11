@@ -4,6 +4,7 @@ export { batch } from "./core/scheduler.js";
 export { createContext, provideContext, useContext } from "./composition/context.js";
 export { mergeProps, splitProps } from "./composition/props.js";
 export { on } from "./composition/on.js";
+export { Router, Route, useRouter, push, replace } from "./composition/router.js";
 export { createStore, unwrapStore } from "./reactivity/store.js";
 export { createResource } from "./reactivity/resource.js";
 export { signal } from "./reactivity/signal.js";

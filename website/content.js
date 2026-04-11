@@ -468,6 +468,24 @@ export const apiReference = [
     ],
   },
   {
+    name: "Router & Route",
+    category: "Routing",
+    summary: "Native Zero-Build Router for SPAs utilizing reactive mechanisms.",
+    details: [
+      "Zero footprint. Connects directly to window.location (hash or history).",
+      "Dynamic data extraction: `Route({ path: '/user/:id' }, (params) => User(params.id))`.",
+      "Uses the standard `Switch/Match` logic to avoid re-renders when route parts are stable.",
+    ],
+  },
+  {
+    name: "push, replace, useRouter",
+    category: "Routing",
+    summary: "Navigation helpers for the native Router.",
+    details: [
+      "Use `push('/path')` to seamlessly change the view and history.",
+    ],
+  },
+  {
     name: "setDomUpdateHook(fn)",
     category: "Debugging",
     summary: "Sets the legacy single-listener DOM write hook for exact text, attribute, and structural updates.",

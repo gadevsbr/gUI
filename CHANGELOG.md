@@ -4,6 +4,15 @@ All notable changes to gUI will be documented in this file.
 
 ## Unreleased
 
+## 1.2.4 - 2026-04-11
+
+### Added
+
+- **Zero-Build Native Router**: Official client-side router avoiding large third-party bundles for SPAs.
+  - `Router({ mode: 'hash' | 'history', fallback }, routes)` wrapper.
+  - `Route({ path }, children)` matcher supporting capture groups e.g. `/users/:id`.
+  - Helpers `push(path)`, `replace(path)`, and `useRouter()`.
+
 ## 1.2.3 - 2026-04-11
 
 ### Changed
