@@ -262,7 +262,22 @@ Wraps an async fetcher function in a reactive `Store`, exposing `{ value, loadin
 
 ### `on(signal, transform?)`
 
-Ergonomic helper for forms. Instead of manual event handlers, bind a signal directly to an input event: `on:input=${on(query)}`.
+Ergonomic helper for forms. Instead of manual event handlers, bind a signal directly to an input event: `on:input=\${on(query)}\`.
+
+### \`Router(options, routes)\` & \`Route({ path }, render)\`
+
+Native zero-build router. Renders sub-components natively based on URL (`#hash` or `history`).
+
+```js
+import { Router, Route } from "@bragamateus/gui";
+
+html\`
+  \${Router({ mode: "hash" }, [
+    Route({ path: "/" }, Home),
+    Route({ path: "/user/:id" }, (params) => UserProfile(params.id))
+  ])}
+\`;
+```
 
 ### `html\`...\``
 
