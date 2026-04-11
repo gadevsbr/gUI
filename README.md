@@ -330,6 +330,20 @@ The inspector and hooks expose exact DOM writes, structure changes, source label
 - `mount(target, value)`
 - `createApp(target, component)`
 
+### `defineElement(tag, setup, options?)`
+
+Compiles a gUI layout into a standard, reusable HTML Web Component. Exposes a reactive `props` store that auto-syncs with node attributes and JS properties.
+
+```js
+defineElement("gui-counter", (props) => {
+  const count = signal(0);
+  return html`<button on:click=${() => count.value++}>
+    ${count.value} (${() => props.theme})
+  </button>`;
+}, { attributes: ["theme"], shadow: true });
+```
+*(Usage in native DOM: `<gui-counter theme="dark"></gui-counter>`)*
+
 ### Debugging
 
 - `setDomUpdateHook(listener | null)`

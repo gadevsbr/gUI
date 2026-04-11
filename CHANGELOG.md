@@ -4,6 +4,19 @@ All notable changes to gUI will be documented in this file.
 
 ## Unreleased
 
+## 1.2.5 - 2026-04-11
+
+### Added
+
+- **Native Web Components (`defineElement`)**: A factory that wraps gUI reactivity inside standard `HTMLElement` Custom Elements.
+  - Generates reactive `props` stores that automatically sync with HTML attributes.
+  - Creates transparent getters/setters on the element so JS property updates (`el.myProp = 10`) immediately trigger the reactive layer.
+  - Inherits the `mount`/`unmount` system, meaning completely self-cleaning `disconnectedCallback` garbage collection.
+
+### Fixed
+
+- **Critical Compiler Attribute Bug**: Fixed an internal parser bug in `templateCompiler.js` where multiple reactive attributes on the same tag (e.g. `<div id=\${...} class=\${...}>`) were silently failing interpolation due to context chunk loss. The engine now correctly analyzes full markup accumulation.
+
 ## 1.2.4 - 2026-04-11
 
 ### Added

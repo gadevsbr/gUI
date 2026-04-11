@@ -213,7 +213,19 @@ export declare function Portal(
   options?: { label?: string },
 ): TemplateResult;
 
-export declare function mount(target: string | Node, value: unknown): MountHandle;
+export function mount(target: Element | string, value: unknown): MountHandle;
+
+export interface ElementOptions {
+  shadow?: boolean;
+  shadowMode?: "open" | "closed";
+  attributes?: string[];
+}
+
+export function defineElement(
+  tag: string,
+  setup: (props: Record<string, any>, host: HTMLElement) => unknown,
+  options?: ElementOptions
+): void;
 
 export declare function createApp(
   target: string | Node,

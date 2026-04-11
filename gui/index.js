@@ -1,6 +1,7 @@
 export { createApp } from "./core/createApp.js";
 export { mount } from "./core/mount.js";
 export { batch } from "./core/scheduler.js";
+export { defineElement } from "./core/element.js";
 export { createContext, provideContext, useContext } from "./composition/context.js";
 export { mergeProps, splitProps } from "./composition/props.js";
 export { on } from "./composition/on.js";

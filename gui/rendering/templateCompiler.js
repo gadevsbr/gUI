@@ -22,9 +22,8 @@ export function compileTemplate(strings) {
 
   for (let index = 0; index < strings.length - 1; index += 1) {
     const chunk = strings[index];
-    const attributeName = readAttributeContext(chunk);
-
     markup += chunk;
+    const attributeName = readAttributeContext(markup);
 
     if (attributeName) {
       const marker = `__gui_attr_${index}__`;
