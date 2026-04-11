@@ -478,6 +478,7 @@ function App() {
             ${() => (siteDevtoolsEnabled.value ? "Disable Devtools" : "Enable Devtools")}
           </button>
           <a class="ghost-button" href="./demo/">Runtime Demo</a>
+          <a class="ghost-button" href="./demo/ecommerce/">Ecommerce Demo</a>
           <a class="ghost-button" href="./benchmark/">Benchmark</a>
           <a class="ghost-button" href="#api" on:click=${() => setSection("api")}>API Reference</a>
           <a class="primary-button" href="#playground" on:click=${() => setSection("playground")}>
@@ -500,6 +501,12 @@ function App() {
                 <div>
                   <strong>Runtime Demo</strong>
                   <span>Inspect direct bindings, keyed ownership, and DOM writes.</span>
+                </div>
+              </a>
+              <a class="detail-link" href="./demo/ecommerce/">
+                <div>
+                  <strong>Ecommerce Showcase</strong>
+                  <span>Open the gShop demo with router, store, resources, portal, and Web Components.</span>
                 </div>
               </a>
               <a class="detail-link" href="./benchmark/">
@@ -547,6 +554,7 @@ function App() {
                   Learn the Model
                 </a>
                 <a class="ghost-button" href="./demo/">Open Runtime Demo</a>
+                <a class="ghost-button" href="./demo/ecommerce/">Open Ecommerce Showcase</a>
                 <a class="ghost-button" href="./benchmark/">Open Benchmark Harness</a>
               </div>
             </div>
@@ -932,6 +940,9 @@ function App() {
               </a>
               <a class="ghost-button" href="./demo/">
                 Open runtime demo
+              </a>
+              <a class="ghost-button" href="./demo/ecommerce/">
+                Open ecommerce showcase
               </a>
               <a class="ghost-button" href="./benchmark/">
                 Open benchmark
