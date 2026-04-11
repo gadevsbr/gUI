@@ -40,6 +40,7 @@ This makes gUI especially useful for:
 - Context and props: `createContext()`, `provideContext()`, `useContext()`, `mergeProps()`, `splitProps()`
 - Form helpers: `on()`
 - Native router: `Router()`, `Route()`, `useRouter()`, `push()`, `replace()`
+- Web Components: `defineElement()`
 - Mounting: `mount()` and `createApp()`
 - Runtime instrumentation: `setDomUpdateHook()` and `subscribeDomUpdates()`
 

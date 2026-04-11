@@ -52,6 +52,11 @@ export const featureHighlights = [
     body: "gUI compiles tagged templates once per call site, clones stable DOM, then binds text, attributes, and listeners directly to reactive sources.",
   },
   {
+    eyebrow: "Web Components",
+    title: "Ship standards-based custom elements without losing fine-grained reactivity",
+    body: "The new `defineElement()` API turns gUI components into native Custom Elements with reactive props, JS property sync, and automatic cleanup on disconnect.",
+  },
+  {
     eyebrow: "Operational Clarity",
     title: "Performance by architecture, not rescue work",
     body: "There is no virtual DOM diffing, no hook scheduler, and no dependency arrays hiding broad work behind convenience abstractions.",
@@ -79,6 +84,10 @@ export const useCases = [
   {
     title: "Embedded widgets and microfrontends",
     body: "Drop a self-contained reactive widget into any existing page or CMS without requiring the host app to adopt a framework.",
+  },
+  {
+    title: "Design systems and Web Components",
+    body: "Publish native Custom Elements that keep gUI's precise reactive updates while integrating cleanly with any host framework or plain HTML page.",
   },
   {
     title: "Interactive product UI",
@@ -446,6 +455,16 @@ export const apiReference = [
       "Useful for lower-level integration points.",
       "Accepts selectors or DOM nodes as targets.",
       "Returns a handle with `container`, `nodes`, and `unmount()`.",
+    ],
+  },
+  {
+    name: "defineElement(tag, setup, options?)",
+    category: "Web Components",
+    summary: "Registers a native Custom Element backed by gUI reactivity, prop syncing, and owner-based cleanup.",
+    details: [
+      "Creates a reactive `props` store from element attributes for use inside the component setup.",
+      "Keeps JS property writes like `element.theme = 'dark'` synchronized with the reactive layer.",
+      "Disposes effects, bindings, and subscriptions automatically when the element disconnects.",
     ],
   },
   {
