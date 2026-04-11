@@ -3,12 +3,14 @@ import { createInspector } from "../gui/devtools/index.js";
 import {
   apiReference,
   codeSamples,
+  comparisonRows,
   coreConcepts,
   faqItems,
   featureHighlights,
   gettingStartedSteps,
   heroStats,
   learningTracks,
+  noBuildBenefits,
   performanceMatrix,
   performancePrinciples,
   playgroundPresets,
@@ -174,6 +176,60 @@ function appendPlaygroundLog(event) {
 
   domWriteCount.update((count) => count + 1);
   domWriteLog.update((items) => [{ label, detail }, ...items].slice(0, 10));
+}
+
+function renderNoBuild() {
+  return html`
+    <div class="no-build-hero">
+      <p class="eyebrow">Zero Build Step</p>
+      <h2>The only fine-grained reactive runtime that works without a bundler or JSX compiler.</h2>
+      <p class="section-copy">
+        SolidJS requires JSX and a compile step. Svelte compiles components. Most modern reactive
+        frameworks assume a build pipeline before you ship a single reactive node. gUI does not.
+        It is the only runtime in this class that works from a plain
+        <code>&lt;script type="module"&gt;</code> tag — no toolchain, no JSX, no compromise.
+      </p>
+    </div>
+
+    <div class="cdn-block">
+      <div class="cdn-block-head">
+        <p class="eyebrow">CDN mode — no npm, no build, no toolchain</p>
+        <p class="cdn-block-note">Copy this into any HTML file and you have a full reactive surface.</p>
+      </div>
+      <pre class="code-block cdn-code"><code>${codeSamples.cdn}</code></pre>
+    </div>
+
+    <div class="no-build-grid">
+      ${noBuildBenefits.map((item) => html`
+        <article class="no-build-card">
+          <h3>${item.title}</h3>
+          <p>${item.body}</p>
+        </article>
+      `)}
+    </div>
+
+    <div class="comparison-block">
+      <div class="comparison-block-head">
+        <p class="eyebrow">Framework comparison</p>
+        <h3>Where gUI sits versus build-required alternatives</h3>
+      </div>
+      <div class="comparison-table">
+        ${comparisonRows.map((row) => html`
+          <div class="comparison-row">
+            <strong class="comparison-feature">${row.feature}</strong>
+            <div class="comparison-cell comparison-cell--gui">
+              <span class="comparison-tag">gUI</span>
+              <p>${row.gui}</p>
+            </div>
+            <div class="comparison-cell comparison-cell--alt">
+              <span class="comparison-tag">Alternatives</span>
+              <p>${row.alternative}</p>
+            </div>
+          </div>
+        `)}
+      </div>
+    </div>
+  `;
 }
 
 function renderNav() {
@@ -499,6 +555,8 @@ function App() {
           </section>
 
           <section class="features-grid">${renderFeatures()}</section>
+
+          <section id="no-build" class="section-panel">${renderNoBuild()}</section>
 
           <section class="section-panel">
             <div class="section-heading">

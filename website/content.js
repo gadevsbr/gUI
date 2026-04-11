@@ -1,5 +1,6 @@
 export const siteNavigation = [
   { id: "overview", label: "Overview" },
+  { id: "no-build", label: "Zero Build Step" },
   { id: "getting-started", label: "Getting Started" },
   { id: "concepts", label: "Concepts" },
   { id: "tutorials", label: "Tutorials" },
@@ -13,28 +14,33 @@ export const siteNavigation = [
 
 export const heroStats = [
   {
+    label: "Zero build required",
+    value: "Runtime-only",
+    note: "Works from a CDN import or local ESM file. No bundler, no JSX compiler, no toolchain.",
+  },
+  {
     label: "Update granularity",
     value: "Per binding",
     note: "Changed state touches only the exact nodes and attributes that depend on it.",
   },
   {
-    label: "DOM strategy",
-    value: "Stable nodes",
-    note: "Templates produce real DOM once, then patch it in place.",
-  },
-  {
-    label: "Scheduler",
-    value: "Microtask batched",
-    note: "Duplicate subscriber work is collapsed before paint.",
+    label: "Ownership model",
+    value: "Keyed & scoped",
+    note: "Reorders move existing DOM nodes. Swapped subtrees dispose nested effects cleanly.",
   },
   {
     label: "Mental model",
     value: "Setup once",
-    note: "Components are setup functions, not rerender boundaries.",
+    note: "Components are setup functions, not rerender boundaries. No hook scheduler.",
   },
 ];
 
 export const featureHighlights = [
+  {
+    eyebrow: "Zero Build Step",
+    title: "Runs in the browser without a bundler or JSX compiler",
+    body: "Drop a single script module tag and you have a full reactive runtime. No build pipeline, no toolchain, no JSX. SolidJS, Svelte, and most modern frameworks cannot offer this without regressing to a worse model.",
+  },
   {
     eyebrow: "Reactive Core",
     title: "Direct subscriptions instead of broad invalidation",
@@ -51,7 +57,7 @@ export const featureHighlights = [
     body: "There is no virtual DOM diffing, no hook scheduler, and no dependency arrays hiding broad work behind convenience abstractions.",
   },
   {
-    eyebrow: "Debugging",
+    eyebrow: "Instrumentation First",
     title: "Inspect the real graph and the real DOM writes",
     body: "gUI now ships with an official visual inspector, DOM update subscriptions, and runtime snapshots so you can see exact writes, moves, flushes, and cleanups in the browser.",
   },
@@ -67,6 +73,14 @@ export const useCases = [
     body: "Build responsive product surfaces without paying rerender costs across entire screens.",
   },
   {
+    title: "Browser extensions",
+    body: "Inject reactive UI into any page without bundler complications. A plain ESM import is all the toolchain you need.",
+  },
+  {
+    title: "Embedded widgets and microfrontends",
+    body: "Drop a self-contained reactive widget into any existing page or CMS without requiring the host app to adopt a framework.",
+  },
+  {
     title: "Interactive product UI",
     body: "When the difference between one node update and a broad rerender matters, gUI gives you that boundary explicitly.",
   },
@@ -77,6 +91,7 @@ export const useCases = [
 ];
 
 export const sidebarPrinciples = [
+  "No build step required",
   "No virtual DOM diffing",
   "No component rerender loop",
   "No dependency arrays",
@@ -365,6 +380,35 @@ export const apiReference = [
     ],
   },
   {
+    name: "createStore(initialValue)",
+    category: "Reactivity",
+    summary: "Creates a deep reactive proxy that automatically tracks property access and array mutations without a build step.",
+    details: [
+      "Allows `store.user.name` directly in templates without getter wrappers.",
+      "Automatically handles nested objects, arrays, and iteration (`Object.keys`).",
+      "Updates via standard property assignment.",
+    ],
+  },
+  {
+    name: "createResource(source?, fetcher)",
+    category: "Reactivity",
+    summary: "Creates a reactive wrapper for async data fetching that integrates with the dependency graph.",
+    details: [
+      "Returns `{ value, loading, error, refetch() }`.",
+      "Automatically refetches when the reactive source (signal or function) changes.",
+      "Provides zero-build async primitives without requiring Suspense boundaries.",
+    ],
+  },
+  {
+    name: "batch(fn)",
+    category: "Reactivity",
+    summary: "Suspends the microtask scheduler and groups multiple signal writes into a single synchronous flush.",
+    details: [
+      "Prevents intermediate effect reads during complex, multi-step state mutations.",
+      "Ensures the DOM is fully synchronized immediately after the batch ends.",
+    ],
+  },
+  {
     name: "effect(fn, options?)",
     category: "Effects",
     summary: "Runs a tracked side effect with automatic dependency capture and optional cleanup support.",
@@ -411,6 +455,16 @@ export const apiReference = [
     details: [
       "Useful for library-level integration and debugging.",
       "Works with the runtime template result structure from `html`.",
+    ],
+  },
+  {
+    name: "on(signal, transform?)",
+    category: "Forms",
+    summary: "Ergonomic helper for two-way bindings on form inputs.",
+    details: [
+      "Connects native DOM events directly to signals.",
+      "Optionally applies a transform function (e.g. `Number`) before writing state.",
+      "Usage: `on:input=${on(query)}`",
     ],
   },
   {
@@ -466,6 +520,11 @@ export const performancePrinciples = [
 
 export const performanceMatrix = [
   {
+    label: "Build requirement",
+    gui: "None — runs from a CDN import or local ESM module",
+    expensive: "JSX compiler and bundler required by most modern reactive frameworks",
+  },
+  {
     label: "State write",
     gui: "Invalidates direct dependents only",
     expensive: "Can trigger a broad component rerender path",
@@ -490,20 +549,20 @@ export const performanceMatrix = [
 export const roadmapMilestones = [
   {
     phase: "Near-term",
-    title: "Stronger ergonomics on top of the current runtime",
+    title: "Zero-Build ergonomics and devtools depth",
     items: [
-      "Official visual inspector with exact DOM overlays and runtime timeline",
-      "Published docs site, runtime demo, and benchmark harness",
-      "Repeatable performance harness and micro-benchmarks",
+      "CDN-first docs, examples, and playground entry points",
+      "Context and prop helpers that preserve one-time component execution",
+      "Deeper devtools: source edge tracing, subscriber ownership graph, flush order",
     ],
   },
   {
     phase: "Mid-term",
-    title: "Deeper observability without losing the direct-binding model",
+    title: "Production confidence and composition scale",
     items: [
-      "Deeper graph inspection and reactive edge tracing",
-      "Profiling hooks that correlate subscriber flushes with DOM work",
-      "Convenience helpers that preserve one-time component setup",
+      "Profiler-grade timelines correlating subscriber flushes with DOM work",
+      "Data-loading and resource primitives that preserve explicit ownership",
+      "Compiler diagnostics and opt-out annotations for edge-case expressions",
     ],
   },
   {
@@ -542,10 +601,75 @@ export const faqItems = [
     question: "What is the biggest missing piece after v1?",
     answer: "Deeper graph tooling, profiler-grade timelines, and higher-level composition helpers are now the highest-value next steps without giving up the one-time execution model.",
   },
+  {
+    question: "How does gUI compare to SolidJS?",
+    answer: "SolidJS is a complete application framework with JSX, a compiler, SSR, and a large ecosystem. gUI is a focused runtime with the same fine-grained reactive core but zero build requirements. If you need SSR, routing, and a meta-framework, SolidJS is the right choice. If you need a reactive runtime that works in a browser extension, injected widget, CMS page, or any build-free context, gUI is the only serious option.",
+  },
+  {
+    question: "Does gUI require a build step?",
+    answer: "No. The runtime-only mode works from a local ESM import or a CDN URL in a module script tag. The optional compiler plugin improves template ergonomics for build-based projects but is never required.",
+  },
+  {
+    question: "Can I use gUI without npm or a bundler?",
+    answer: "Yes. Import gUI from any ESM CDN and you have a full reactive runtime with no installation, no toolchain, and no build step required.",
+  },
 ];
 
 export const codeSamples = {
   install: `npm install @bragamateus/gui`,
+  cdn: `<!-- No npm, no build step, no toolchain -->\n<script type="module">\nimport { signal, html, createApp } from "https://esm.sh/@bragamateus/gui";\n\nconst count = signal(0);\n\nfunction App() {\n  return html\`\n    <section>\n      <h1>\${count.value}</h1>\n      <button on:click=\${() => (count.value += 1)}>+1</button>\n    </section>\n  \`;\n}\n\ncreateApp("#app", App);\n</script>`,
   starter: `import { createApp, signal, computed, html } from "@bragamateus/gui";\n\nconst count = signal(0);\nconst doubled = computed(() => count.value * 2);\n\nfunction App() {\n  return html\`\n    <section>\n      <h1>\${count.value}</h1>\n      <p>\${doubled.value}</p>\n      <button on:click=\${() => (count.value += 1)}>Increment</button>\n    </section>\n  \`;\n}\n\ncreateApp("#app", App);`,
   runtimeRules: `// gUI runtime rules\n// 1. Components run once.\n// 2. State changes update exact bindings.\n// 3. Use computed() or getters for richer reactive expressions.\n// 4. Effects are for side effects, not rerendering.`,
 };
+
+export const noBuildBenefits = [
+  {
+    title: "Browser extensions",
+    body: "No bundler means no manifest complications. Drop a reactive UI into any content script with a plain ESM import, no build pipeline required.",
+  },
+  {
+    title: "Embedded widgets and microfrontends",
+    body: "Inject a self-contained reactive widget into any existing page or CMS. Zero toolchain means zero setup friction for the host.",
+  },
+  {
+    title: "Rapid prototyping",
+    body: "Open a plain HTML file, add a script module tag, and have a fully reactive surface running in under a minute.",
+  },
+  {
+    title: "CDN-first deploys",
+    body: "No build step means no deploy pipeline. Publish your ESM file to any static host and link it. Updates ship immediately.",
+  },
+];
+
+export const comparisonRows = [
+  {
+    feature: "Build step required",
+    gui: "No — runs from CDN or local ESM",
+    alternative: "Yes — JSX compiler, bundler, or both for most reactive frameworks",
+  },
+  {
+    feature: "JSX or custom syntax required",
+    gui: "No — standard html tagged template, zero tooling",
+    alternative: "Required by SolidJS and Svelte; significant DX investment elsewhere",
+  },
+  {
+    feature: "Fine-grained reactivity",
+    gui: "Yes — signal, computed, effect graph with direct DOM subscriptions",
+    alternative: "Yes in SolidJS and Preact Signals; absent or coarse in most others",
+  },
+  {
+    feature: "Keyed list reconciliation",
+    gui: "Yes — stable per-item ownership, exact DOM moves on reorder",
+    alternative: "Yes in SolidJS For; absent or partial in most no-build alternatives",
+  },
+  {
+    feature: "Visual DOM write inspector",
+    gui: "Built-in — official overlay, timeline, source labels, event stream",
+    alternative: "Third-party browser extension or absent",
+  },
+  {
+    feature: "Works in browser extensions",
+    gui: "Yes — no bundler means no manifest or CSP complications",
+    alternative: "Requires significant build configuration in most frameworks",
+  },
+];

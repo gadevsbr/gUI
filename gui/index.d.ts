@@ -47,12 +47,40 @@ export interface AppHandle {
   unmount(): void;
 }
 
+export function batch<T>(fn: () => T): T;
+
+export function createStore<T extends object>(initialValue: T): T;
+export function unwrapStore<T extends object>(proxy: T): T;
+
+export interface Resource<T> {
+  readonly value: T | undefined;
+  readonly loading: boolean;
+  readonly error: unknown;
+  refetch(): Promise<T>;
+}
+
+export function createResource<T, S = unknown>(
+  source: S | (() => S) | Signal<S> | Computed<S>,
+  fetcher: (source: S) => Promise<T>,
+  options?: { initialValue?: T }
+): Resource<T>;
+
+export function createResource<T>(
+  fetcher: () => Promise<T>,
+  options?: { initialValue?: T }
+): Resource<T>;
+
 export interface Context<T> {
   id: string;
   label: string;
   defaultValue: T;
   Provider(value: T, render: (() => unknown) | unknown): TemplateResult;
 }
+
+export function on<T = string>(
+  signal: Signal<T> | ((value: T) => void),
+  transform?: (value: string) => T
+): (event: Event) => void;
 
 export interface MatchCase<T = unknown> {
   when: T | Signal<T> | Computed<T> | (() => T);

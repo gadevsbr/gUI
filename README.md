@@ -58,6 +58,32 @@ GitHub Packages:
 npm install @gadevsbr/gui --registry=https://npm.pkg.github.com
 ```
 
+## Zero-Build Mode
+
+gUI runs directly in the browser without any build step, bundler, or JSX compiler. Add a single module script tag and you have a full reactive runtime:
+
+```html
+<!-- No npm. No build step. No toolchain. -->
+<script type="module">
+import { signal, html, createApp } from "https://esm.sh/@bragamateus/gui";
+
+const count = signal(0);
+
+function App() {
+  return html`
+    <section>
+      <h1>${count.value}</h1>
+      <button on:click=${() => (count.value += 1)}>+1</button>
+    </section>
+  `;
+}
+
+createApp("#app", App);
+</script>
+```
+
+This works in **browser extensions**, **injected widgets**, **CMS pages**, and any context where adding a build pipeline is not feasible. The optional Vite/esbuild compiler plugin improves ergonomics for build-based projects but is never required.
+
 ## Website
 
 The project site is live at:
@@ -222,6 +248,22 @@ Creates lazy cached derived state. Computeds recalculate only when tracked sourc
 
 Runs tracked side effects with cleanup support. Effects are batched in microtasks and rerun only when their sources changed.
 
+### `createStore(initialValue)`
+
+Creates a deep reactive proxy that automatically tracks object properties and array mutations without needing a build step. Allows writing `${store.user.name}` directly in templates.
+
+### `batch(fn)`
+
+Suspends the microtask scheduler and groups multiple state mutations into a single synchronous flush.
+
+### `createResource(source?, fetcher)`
+
+Wraps an async fetcher function in a reactive `Store`, exposing `{ value, loading, error, refetch() }`. Automatically reruns when the reactive source changes.
+
+### `on(signal, transform?)`
+
+Ergonomic helper for forms. Instead of manual event handlers, bind a signal directly to an input event: `on:input=${on(query)}`.
+
 ### `html\`...\``
 
 Compiles a template once per call site, clones real DOM nodes, and wires each dynamic slot directly to signals, computeds, or getter functions.
@@ -283,6 +325,21 @@ gUI is optimized around a simple rule: state changes should trigger only the wor
 - Text and attribute bindings update concrete DOM nodes in place.
 - Keyed list changes move existing nodes instead of rebuilding rows.
 - Disposed dynamic branches release nested effects and listeners before nodes are removed.
+
+## Why Not SolidJS or Preact Signals?
+
+**SolidJS** is a complete application framework. It has JSX, a compiler, SSR, a router, and a large ecosystem. If you need all of that, SolidJS is the right choice.
+
+**Preact Signals** is a state primitive that integrates with Preact's existing framework. It does not give you a standalone runtime without a build step.
+
+**gUI** is a focused reactive runtime. It has the same fine-grained reactive core (signal, computed, effect) but:
+
+- Requires **no build step** — runs from a CDN or local ESM file in a plain `<script type="module">`
+- Requires **no JSX** — uses an `html` tagged template that works in any browser today
+- Ships with **built-in devtools** — visual inspector, DOM update stream, and runtime snapshots
+- Has **keyed list reconciliation** with stable per-item ownership out of the box
+
+gUI is the right choice when you need a reactive runtime in a build-free context: browser extensions, embedded widgets, injected scripts, CMS pages, or any project where adding a bundler is friction, not a feature.
 
 ## Important Constraint
 

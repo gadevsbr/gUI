@@ -4,6 +4,16 @@ All notable changes to gUI will be documented in this file.
 
 ## Unreleased
 
+## 1.2.2 - 2026-04-11
+
+### Added
+
+- `createStore()`: Nested reactive proxy supporting state reads without getter wrappers (`${store.count}`).
+- `batch()`: Suspends the microtask scheduler and groups multiple signal writes into a single synchronous flush.
+- `createResource()`: Wraps asynchronous side-effects in a reactive store (`loading`, `value`, `error`) that recalculates natively on dependency updates.
+- `on()`: Ergonomic helper simplifying two-way data-bindings for native input events.
+- Added all new primitives to `index.js`, `index.d.ts` and the main website API reference.
+
 ## 1.2.1 - 2026-04-07
 
 ### Changed

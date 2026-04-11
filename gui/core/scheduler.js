@@ -3,15 +3,28 @@ import { createQueue } from "../utils/queue.js";
 const queue = createQueue();
 let scheduled = false;
 let flushing = false;
+let batchDepth = 0;
 
 export function scheduleJob(job) {
   if (!queue.add(job)) {
     return;
   }
 
-  if (!scheduled) {
+  if (!scheduled && batchDepth === 0) {
     scheduled = true;
     queueMicrotask(flushJobs);
+  }
+}
+
+export function batch(fn) {
+  batchDepth += 1;
+  try {
+    return fn();
+  } finally {
+    batchDepth -= 1;
+    if (batchDepth === 0 && queue.size > 0 && !scheduled && !flushing) {
+      flushJobs();
+    }
   }
 }
 

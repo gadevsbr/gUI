@@ -1,7 +1,11 @@
 export { createApp } from "./core/createApp.js";
 export { mount } from "./core/mount.js";
+export { batch } from "./core/scheduler.js";
 export { createContext, provideContext, useContext } from "./composition/context.js";
 export { mergeProps, splitProps } from "./composition/props.js";
+export { on } from "./composition/on.js";
+export { createStore, unwrapStore } from "./reactivity/store.js";
+export { createResource } from "./reactivity/resource.js";
 export { signal } from "./reactivity/signal.js";
 export { computed } from "./reactivity/computed.js";
 export { effect } from "./reactivity/effect.js";
